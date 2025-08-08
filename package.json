@@ -4,20 +4,24 @@
   "description": "Cross-platform chord transposition application",
   "private": true,
   "scripts": {
-    "build": "npm run build:shared && npm run build:web && npm run build:miniprogram",
+    "build": "node scripts/build-all.js",
+    "build:all": "node scripts/build-all.js",
     "build:shared": "cd shared && npm run build",
-    "build:web": "cd platforms/web && npm run build",
-    "build:miniprogram": "cd platforms/miniprogram && npm run build",
+    "build:web": "npm run build:shared && cd platforms/web && npm run build",
+    "build:miniprogram": "node scripts/build-all.js miniprogram",
     "dev": "npm run dev:shared & npm run dev:web",
     "dev:shared": "cd shared && npm run dev",
     "dev:web": "cd platforms/web && npm run dev",
     "dev:miniprogram": "echo 'Use WeChat Developer Tools to develop miniprogram'",
+    "deploy:web": "npm run build:web && echo 'Deploy web build to your hosting service'",
+    "deploy:miniprogram": "echo 'Use WeChat Developer Tools to upload miniprogram'",
     "clean": "npm run clean:shared && npm run clean:web",
     "clean:shared": "cd shared && npm run clean",
     "clean:web": "cd platforms/web && npm run build && rm -rf dist",
     "install:all": "npm install && cd shared && npm install && cd ../platforms/web && npm install",
     "lint": "cd platforms/web && npm run lint",
-    "test": "echo 'Tests will be added in future iterations'"
+    "test": "node platforms/miniprogram/test-checklist.js",
+    "optimize": "node platforms/miniprogram/optimize.js"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
