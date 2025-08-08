@@ -78,4 +78,4 @@ MIT License
 
 ## 作者
 
-starry3085 (meko.h@qq.com)
+starry3085
