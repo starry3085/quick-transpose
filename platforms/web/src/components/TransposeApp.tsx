@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
-import { Layout, Tabs, TabPanel } from 'tdesign-react';
+import React from 'react';
+import { Layout, Tabs } from 'tdesign-react';
 import { MusicIcon, BookOpenIcon } from 'tdesign-icons-react';
+import { useAppContext } from '../App';
 import TransposeTab from './TransposeTab';
 import DictionaryTab from './DictionaryTab';
 import './TransposeApp.less';
 
 const { Header, Content } = Layout;
+const { TabPanel } = Tabs;
 
 const TransposeApp: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('transpose');
+  const { activeTab, setActiveTab } = useAppContext();
+
+  const handleTabChange = (value: string | number) => {
+    setActiveTab(String(value));
+  };
 
   return (
     <div className="transpose-app">
@@ -30,7 +36,7 @@ const TransposeApp: React.FC = () => {
             <div className="main-card">
               <Tabs 
                 value={activeTab} 
-                onChange={setActiveTab}
+                onChange={handleTabChange}
                 placement="top"
                 size="large"
               >

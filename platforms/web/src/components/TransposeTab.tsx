@@ -8,17 +8,19 @@ import {
   Tag, 
   Space, 
   Collapse,
-  CollapsePanel,
-  Message
+  MessagePlugin
 } from 'tdesign-react';
 import { CopyIcon, SwapIcon, RefreshIcon } from 'tdesign-icons-react';
+import { useAppContext } from '../App';
 import { TransposeEngine, SIMPLE_KEYS, COMMON_PROGRESSIONS, createStorageManager, debounce } from '../utils/shared-import';
 import type { KeyType, TransposeSettings } from '../utils/shared-import';
 import './TransposeTab.less';
 
 const { Option } = Select;
+const { CollapsePanel } = Collapse;
 
 const TransposeTab: React.FC = () => {
+  const { fillProgressionData, clearFillData } = useAppContext();
   const [progression, setProgression] = useState('');
   const [sourceKey, setSourceKey] = useState<KeyType>('C');
   const [targetKey, setTargetKey] = useState<KeyType>('G');
@@ -43,6 +45,17 @@ const TransposeTab: React.FC = () => {
     setRecentProgressions(recent);
   }, []);
 
+  // 处理从和弦字典填入的数据
+  useEffect(() => {
+    if (fillProgressionData) {
+      setProgression(fillProgressionData);
+      storageManager.addRecentProgression(fillProgressionData);
+      setRecentProgressions(storageManager.getRecentProgressions());
+      clearFillData(); // 清除填入数据
+      MessagePlugin.success('已从和弦字典填入进行');
+    }
+  }, [fillProgressionData, clearFillData, storageManager]);
+
   // 保存设置
   const saveSettings = useCallback(() => {
     const settings: TransposeSettings = {
@@ -64,6 +77,15 @@ const TransposeTab: React.FC = () => {
     debouncedSaveSettings();
   }, [sourceKey, targetKey, isMinor, useSeventhChords, debouncedSaveSettings]);
 
+  // 处理选择器变化
+  const handleSourceKeyChange = (value: string | number) => {
+    setSourceKey(value as KeyType);
+  };
+
+  const handleTargetKeyChange = (value: string | number) => {
+    setTargetKey(value as KeyType);
+  };
+
   // 执行转调
   const result = TransposeEngine.transpose({
     progression,
@@ -78,9 +100,9 @@ const TransposeTab: React.FC = () => {
     if (result.success && result.data.length > 0) {
       const chordString = result.data.map(r => r.chord).join(' ');
       navigator.clipboard.writeText(chordString).then(() => {
-        Message.success('已复制到剪贴板');
+        MessagePlugin.success('已复制到剪贴板');
       }).catch(() => {
-        Message.error('复制失败');
+        MessagePlugin.error('复制失败');
       });
     }
   };
@@ -136,7 +158,7 @@ const TransposeTab: React.FC = () => {
                 <div className="key-input-group">
                   <Select 
                     value={sourceKey} 
-                    onChange={setSourceKey}
+                    onChange={handleSourceKeyChange}
                     size="large"
                   >
                     {SIMPLE_KEYS.map(key => (
@@ -156,7 +178,7 @@ const TransposeTab: React.FC = () => {
                 <label className="form-label">目标调</label>
                 <Select 
                   value={targetKey} 
-                  onChange={setTargetKey}
+                  onChange={handleTargetKeyChange}
                   size="large"
                 >
                   {SIMPLE_KEYS.map(key => (

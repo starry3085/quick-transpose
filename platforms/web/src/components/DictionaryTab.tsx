@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Card, 
   Select, 
   Switch, 
   Button, 
   Tag, 
-  Space 
+  MessagePlugin
 } from 'tdesign-react';
 import { ArrowRightIcon } from 'tdesign-icons-react';
+import { useAppContext } from '../App';
 import { 
   TransposeEngine, 
   SIMPLE_KEYS, 
   DEGREE_NAMES,
-  getChordDictionary,
-  searchChords,
-  getChordByDegree
+  COMMON_PROGRESSIONS
 } from '../utils/shared-import';
 import type { KeyType } from '../utils/shared-import';
 import './DictionaryTab.less';
@@ -22,20 +21,26 @@ import './DictionaryTab.less';
 const { Option } = Select;
 
 const DictionaryTab: React.FC = () => {
+  const { fillProgression } = useAppContext();
   const [selectedKey, setSelectedKey] = useState<KeyType>('C');
   const [isMinor, setIsMinor] = useState(false);
 
   const chords = TransposeEngine.getChordsByKey(selectedKey, isMinor);
   const romanNumerals = TransposeEngine.getRomanNumerals(isMinor);
 
+  // 处理选择器变化
+  const handleKeyChange = (value: string | number) => {
+    setSelectedKey(value as KeyType);
+  };
+
   const handleFillToTransposer = (degree: number) => {
-    // 这里可以通过状态管理或者事件来传递给转换器页面
-    console.log('Fill to transposer:', degree);
-    // 实际实现中可以使用 Context 或状态管理库
+    fillProgression(degree.toString());
+    MessagePlugin.success(`已填入第${degree}级和弦到转调工具`);
   };
 
   const handleQuickFill = (progression: string) => {
-    console.log('Quick fill progression:', progression);
+    fillProgression(progression);
+    MessagePlugin.success('已填入和弦进行到转调工具');
   };
 
   return (
@@ -49,7 +54,7 @@ const DictionaryTab: React.FC = () => {
                 <label className="form-label">调</label>
                 <Select 
                   value={selectedKey} 
-                  onChange={setSelectedKey}
+                  onChange={handleKeyChange}
                   size="large"
                 >
                   {SIMPLE_KEYS.map(key => (
