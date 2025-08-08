@@ -8,8 +8,15 @@ import {
   Space 
 } from 'tdesign-react';
 import { ArrowRightIcon } from 'tdesign-icons-react';
-import { TransposeEngine, SIMPLE_KEYS, DEGREE_NAMES } from '@shared';
-import type { KeyType } from '@shared';
+import { 
+  TransposeEngine, 
+  SIMPLE_KEYS, 
+  DEGREE_NAMES,
+  getChordDictionary,
+  searchChords,
+  getChordByDegree
+} from '../utils/shared-import';
+import type { KeyType } from '../utils/shared-import';
 import './DictionaryTab.less';
 
 const { Option } = Select;

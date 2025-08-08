@@ -10,3 +10,4 @@ export * from './utils/transpose';
 export * from './utils/validator';
 export * from './utils/storage';
 export * from './utils/debounce';
+export * from './utils/chord-dictionary';

@@ -1,21 +1,20 @@
 /**
- * 和弦数据常量定义
+ * 和弦数据常量
  */
 
-import type { ChordMaps, RomanNumerals, CommonProgression, KeyType } from '../types/chord';
+import type { KeyType } from '../types/chord';
 
-// 所有调性
-export const KEYS: KeyType[] = [
-  'C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B'
+// 简化的调性列表（用于快速选择）
+export const SIMPLE_KEYS: KeyType[] = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+
+// 完整的调性列表（包含升降号）
+export const ALL_KEYS: KeyType[] = [
+  'C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 
+  'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B'
 ];
 
-// 简化调性（用于UI显示）
-export const SIMPLE_KEYS: KeyType[] = [
-  'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'
-];
-
-// 完整的12调和弦映射
-export const CHORD_MAPS: ChordMaps = {
+// 完整的12调和弦数据
+export const CHORD_MAPS = {
   major: {
     'C': ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim'],
     'C#': ['C#', 'D#m', 'E#m', 'F#', 'G#', 'A#m', 'B#dim'],
@@ -54,34 +53,30 @@ export const CHORD_MAPS: ChordMaps = {
     'Bb': ['Bbm', 'Cdim', 'Db', 'Ebm', 'Fm', 'Gb', 'Ab'],
     'B': ['Bm', 'C#dim', 'D', 'Em', 'F#m', 'G', 'A']
   }
-};
+} as const;
 
 // 罗马数字标记
-export const ROMAN_NUMERALS: RomanNumerals = {
+export const ROMAN_NUMERALS = {
   major: ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'],
   minor: ['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII']
-};
+} as const;
 
-// 度数名称
-export const DEGREE_NAMES = ['一度', '二度', '三度', '四度', '五度', '六度', '七度'];
+// 级数名称
+export const DEGREE_NAMES = ['一度', '二度', '三度', '四度', '五度', '六度', '七度'] as const;
 
 // 常用和弦进行
-export const COMMON_PROGRESSIONS: CommonProgression[] = [
-  { label: '4536251', value: '4 5 3 6 2 5 1' },
-  { label: '1625', value: '1 6 2 5' },
-  { label: '251', value: '2 5 1' },
-  { label: '6415', value: '6 4 1 5' },
-  { label: '1564', value: '1 5 6 4' },
-  { label: '1456', value: '1 4 5 6' },
-  { label: '卡农进行', value: '1 5 6 3 4 1 4 5' }
+export const COMMON_PROGRESSIONS = [
+  { label: '4536251', value: '4 5 3 6 2 5 1', description: '卡农进行' },
+  { label: '1625', value: '1 6 2 5', description: '圆周进行' },
+  { label: '251', value: '2 5 1', description: '爵士基础进行' },
+  { label: '6415', value: '6 4 1 5', description: '抒情进行' },
+  { label: '1564', value: '1 5 6 4', description: '流行进行' },
+  { label: '1451', value: '1 4 5 1', description: '古典终止式' }
 ];
 
 // 和弦类型说明
-export const CHORD_TYPE_DESCRIPTIONS = {
-  major: '大三和弦',
-  minor: '小三和弦',
-  diminished: '减三和弦',
-  seventh: '七和弦',
-  majorSeventh: '大七和弦',
-  minorSeventh: '小七和弦'
-};
+export const CHORD_TYPE_LEGENDS = [
+  { label: '大三和弦', example: 'C, F, G', description: '明亮、稳定的和弦' },
+  { label: '小三和弦', example: 'Dm, Em, Am', description: '柔和、忧郁的和弦' },
+  { label: '减三和弦', example: 'Bdim', description: '紧张、不稳定的和弦' }
+] as const;

@@ -44,9 +44,9 @@ Note:
 
 [X] Set up monorepo structure with proper build configurations for both platforms
 
-[/] Implement responsive web layout with TDesign components for chord transposition interface
+[X] Implement responsive web layout with TDesign components for chord transposition interface
 
-[ ] Create cross-platform chord dictionary data structure and search functionality
+[/] Create cross-platform chord dictionary data structure and search functionality
 
 [ ] Develop web version of chord dictionary with responsive grid layout and modal details
 

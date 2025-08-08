@@ -79,7 +79,7 @@ export class TransposeEngine {
      */
     static getChordsByKey(key, isMinor = false) {
         const chordType = isMinor ? 'minor' : 'major';
-        return CHORD_MAPS[chordType][key] || [];
+        return [...(CHORD_MAPS[chordType][key] || [])];
     }
     /**
      * 获取罗马数字标记
@@ -87,7 +87,7 @@ export class TransposeEngine {
      * @returns 罗马数字列表
      */
     static getRomanNumerals(isMinor = false) {
-        return ROMAN_NUMERALS[isMinor ? 'minor' : 'major'];
+        return [...ROMAN_NUMERALS[isMinor ? 'minor' : 'major']];
     }
     /**
      * 获取和弦的详细信息
