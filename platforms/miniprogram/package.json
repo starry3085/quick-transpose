@@ -1,0 +1,17 @@
+{
+  "name": "@quick-transpose/miniprogram",
+  "version": "1.0.0",
+  "description": "WeChat miniprogram version of chord transposition app",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/wechat-miniprogram": "^3.4.0",
+    "typescript": "^5.0.0",
+    "rimraf": "^5.0.0"
+  }
+}
