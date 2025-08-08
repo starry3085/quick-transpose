@@ -1,5 +1,7 @@
 // pages/transpose/transpose.js
 const app = getApp()
+const storage = require('../../utils/storage.js')
+const validator = require('../../utils/validator.js')
 
 Page({
   data: {
@@ -19,12 +21,23 @@ Page({
   },
 
   onLoad() {
+    // 初始化数据
+    this.setData({
+      keys: app.globalData.keys,
+      commonProgressions: app.globalData.commonProgressions
+    })
+    
     // 从本地存储恢复设置
-    const settings = wx.getStorageSync('transpose_settings')
-    if (settings) {
+    const settings = storage.get('transpose_settings', {})
+    if (settings.sourceKey) {
+      const sourceIndex = app.globalData.keys.indexOf(settings.sourceKey)
+      const targetIndex = app.globalData.keys.indexOf(settings.targetKey)
+      
       this.setData({
-        sourceKey: settings.sourceKey || 'C',
+        sourceKey: settings.sourceKey,
         targetKey: settings.targetKey || 'G',
+        sourceKeyIndex: sourceIndex >= 0 ? sourceIndex : 0,
+        targetKeyIndex: targetIndex >= 0 ? targetIndex : 6,
         isMinor: settings.isMinor || false
       })
     }
@@ -45,10 +58,29 @@ Page({
 
   // 输入和弦进行
   onProgressionInput(e) {
+    const input = e.detail.value
     this.setData({
-      progression: e.detail.value
+      progression: input
     })
-    this.transposeChords()
+    
+    // 防抖处理
+    if (this.inputTimer) {
+      clearTimeout(this.inputTimer)
+    }
+    
+    this.inputTimer = setTimeout(() => {
+      if (input.trim()) {
+        const validation = validator.validateProgression(input)
+        if (validation.isValid) {
+          this.transposeChords()
+        } else {
+          this.setData({ result: [] })
+          // 不显示错误提示，避免输入时频繁弹窗
+        }
+      } else {
+        this.setData({ result: [] })
+      }
+    }, 300)
   },
 
   // 选择源调
@@ -133,15 +165,19 @@ Page({
 
   // 复制结果
   copyResult() {
+    if (this.data.result.length === 0) {
+      validator.showError('没有可复制的内容')
+      return
+    }
+    
     const chordString = this.data.result.map(r => r.chord).join(' ')
     wx.setClipboardData({
       data: chordString,
       success: () => {
-        wx.showToast({
-          title: '已复制',
-          icon: 'success',
-          duration: 1500
-        })
+        validator.showSuccess('已复制到剪贴板')
+      },
+      fail: () => {
+        validator.showError('复制失败')
       }
     })
   },
@@ -149,7 +185,7 @@ Page({
   // 保存设置
   saveSettings() {
     const { sourceKey, targetKey, isMinor } = this.data
-    wx.setStorageSync('transpose_settings', {
+    storage.set('transpose_settings', {
       sourceKey,
       targetKey,
       isMinor

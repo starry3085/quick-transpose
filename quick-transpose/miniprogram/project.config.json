@@ -41,7 +41,7 @@
   },
   "compileType": "miniprogram",
   "libVersion": "2.19.4",
-  "appid": "wxYourAppId",
+  "appid": "touristappid",
   "projectname": "transpose-miniprogram",
   "condition": {}
 }

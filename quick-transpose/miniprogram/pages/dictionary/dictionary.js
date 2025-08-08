@@ -1,5 +1,6 @@
 // pages/dictionary/dictionary.js
 const app = getApp()
+const storage = require('../../utils/storage.js')
 
 Page({
   data: {
@@ -7,12 +8,16 @@ Page({
     selectedKeyIndex: 0,
     isMinor: false,
     chords: [],
-    keys: ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
+    keys: [],
     romanNumerals: [],
     degreeNames: ['一度', '二度', '三度', '四度', '五度', '六度', '七度']
   },
 
   onLoad() {
+    // 初始化数据
+    this.setData({
+      keys: app.globalData.keys
+    })
     this.updateChords()
   },
 
