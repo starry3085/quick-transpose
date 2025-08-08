@@ -56,36 +56,40 @@ quick-transpose/
 ### 环境要求
 - Node.js >= 18.0.0
 - npm >= 9.0.0
+- 微信开发者工具 (小程序开发)
 
-### 安装依赖
+### 项目状态
+- ✅ **Web版本**: 已完成开发并部署到CloudStudio
+- ✅ **小程序版本**: 基础架构完成，可进行测试
+- ✅ **跨平台共享**: 核心业务逻辑已实现代码复用
+
+### 快速体验
+
+#### 网页版 (已部署)
+直接访问已部署的网页版本进行体验
+
+#### 小程序版 (开发测试)
 ```bash
-# 安装所有依赖
-npm run install:all
-
-# 或者分别安装
-npm install
-cd shared && npm install
-cd ../platforms/web && npm install
+# 1. 下载并安装微信开发者工具
+# 2. 打开微信开发者工具
+# 3. 选择"导入项目"
+# 4. 项目目录: platforms/miniprogram
+# 5. AppID: touristappid (测试用)
 ```
 
 ### 开发模式
 
 #### 网页版开发
 ```bash
-# 启动共享模块监听和网页版开发服务器
+# 启动开发服务器
 npm run dev
-
-# 或者分别启动
-npm run dev:shared  # 启动共享模块TypeScript编译监听
-npm run dev:web     # 启动网页版开发服务器 (http://localhost:3000)
+# 访问 http://localhost:3000
 ```
 
 #### 小程序开发
 ```bash
-# 编译共享模块
-npm run build:shared
-
 # 使用微信开发者工具打开 platforms/miniprogram 目录
+# 项目已配置完成，可直接预览和调试
 ```
 
 ### 构建生产版本

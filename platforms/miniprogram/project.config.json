@@ -48,7 +48,7 @@
   },
   "compileType": "miniprogram",
   "libVersion": "2.19.4",
-  "appid": "wx1234567890abcdef",
+  "appid": "touristappid",
   "projectname": "quick-transpose-miniprogram",
   "debugOptions": {
     "hidedInDevtools": []
