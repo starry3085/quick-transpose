@@ -1,0 +1,145 @@
+{
+  "passed": 22,
+  "failed": 6,
+  "details": [
+    {
+      "name": "Web应用主组件",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "转调应用组件",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "转调标签页组件",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "字典标签页组件",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "Web构建产物",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "共享类型定义",
+      "passed": false,
+      "message": "文件不存在"
+    },
+    {
+      "name": "转调算法模块",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "和弦字典模块",
+      "passed": false,
+      "message": "文件不存在"
+    },
+    {
+      "name": "状态管理模块",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "跨平台存储模块",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "自适应布局组件",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "响应式网格组件",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "自适应卡片组件",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "自适应按钮组件",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "转调算法实现",
+      "passed": true,
+      "message": "包含转调函数"
+    },
+    {
+      "name": "和弦字典数据",
+      "passed": false,
+      "message": "文件不存在"
+    },
+    {
+      "name": "平台检测功能",
+      "passed": false,
+      "message": "缺少用户代理检测"
+    },
+    {
+      "name": "状态管理器",
+      "passed": true,
+      "message": "包含状态管理类"
+    },
+    {
+      "name": "项目配置文件",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "构建脚本",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "部署配置",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "项目依赖配置",
+      "message": "React: false, TDesign: false, TypeScript: true"
+    },
+    {
+      "name": "开发文档",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "部署指南",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "测试指南",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "项目说明文档",
+      "passed": true,
+      "message": "文件存在"
+    },
+    {
+      "name": "转调功能模拟测试",
+      "passed": true,
+      "message": "需要在浏览器环境中进一步验证"
+    },
+    {
+      "name": "响应式设计检查",
+      "passed": false,
+      "message": "未发现明确的响应式CSS规则"
+    }
+  ]
+}
