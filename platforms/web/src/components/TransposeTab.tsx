@@ -16,7 +16,7 @@ import type { KeyType, TransposeSettings } from '../utils/shared-import';
 import './TransposeTab.less';
 
 const { Option } = Select;
-const { CollapsePanel } = Collapse;
+const CollapsePanel = Collapse.Panel;
 
 const TransposeTab: React.FC = () => {
   const { fillProgressionData, clearFillData } = useAppContext();
@@ -77,11 +77,11 @@ const TransposeTab: React.FC = () => {
   }, [sourceKey, targetKey, isMinor, useSeventhChords, debouncedSaveSettings]);
 
   // 处理选择器变化
-  const handleSourceKeyChange = (value: string | number) => {
+  const handleSourceKeyChange = (value: any) => {
     setSourceKey(value as KeyType);
   };
 
-  const handleTargetKeyChange = (value: string | number) => {
+  const handleTargetKeyChange = (value: any) => {
     setTargetKey(value as KeyType);
   };
 
@@ -168,7 +168,8 @@ const TransposeTab: React.FC = () => {
                     variant="outline"
                     onClick={handleSwapKeys}
                     icon={<SwapIcon />}
-                  />
+                  >
+                  </AdaptiveButton>
                 </div>
               </div>
               
@@ -245,14 +246,13 @@ const TransposeTab: React.FC = () => {
             title="转换结果" 
             className="result-card"
             actions={
-              <AdaptiveButton 
-                variant="outline" 
-                size="small"
-                onClick={handleCopy}
-                icon={<CopyIcon />}
-              >
-                复制
-              </AdaptiveButton>
+                <AdaptiveButton 
+                  variant="outline"
+                  onClick={handleClear}
+                  icon={<RefreshIcon />}
+                >
+                  清空
+                </AdaptiveButton>
             }
           >
             <div className="result-content">

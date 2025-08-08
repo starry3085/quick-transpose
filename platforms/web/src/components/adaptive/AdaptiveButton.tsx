@@ -9,10 +9,11 @@ import { usePlatform } from '../../hooks/usePlatform';
 import { getResponsiveButtonSize } from '../../utils/platform-detection';
 
 interface AdaptiveButtonProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onClick?: () => void;
   variant?: 'base' | 'outline' | 'dashed' | 'text';
   theme?: 'default' | 'primary' | 'success' | 'warning' | 'danger';
+  size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
   loading?: boolean;
   icon?: React.ReactNode;
@@ -25,6 +26,7 @@ export const AdaptiveButton: React.FC<AdaptiveButtonProps> = ({
   onClick,
   variant = 'base',
   theme = 'default',
+  size: propSize,
   disabled = false,
   loading = false,
   icon,
@@ -32,7 +34,7 @@ export const AdaptiveButton: React.FC<AdaptiveButtonProps> = ({
   block = false
 }) => {
   const platform = usePlatform();
-  const size = getResponsiveButtonSize(platform.deviceType);
+  const size = propSize || getResponsiveButtonSize(platform.deviceType);
   
   const buttonStyle: React.CSSProperties = {
     minHeight: platform.isMobile ? '40px' : platform.isTablet ? '44px' : '48px',

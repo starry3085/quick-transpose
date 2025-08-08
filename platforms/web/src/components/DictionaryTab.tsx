@@ -28,7 +28,7 @@ const DictionaryTab: React.FC = () => {
   const romanNumerals = TransposeEngine.getRomanNumerals(isMinor);
 
   // 处理选择器变化
-  const handleKeyChange = (value: string | number) => {
+  const handleKeyChange = (value: any) => {
     setSelectedKey(value as KeyType);
   };
 
@@ -99,7 +99,6 @@ const DictionaryTab: React.FC = () => {
                 </div>
                 <AdaptiveButton
                   variant="text"
-                  size="small"
                   onClick={() => handleFillToTransposer(index + 1)}
                   icon={<ArrowRightIcon />}
                 >

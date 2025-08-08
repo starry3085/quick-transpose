@@ -1,20 +1,20 @@
 {
   "path": "e:\\quick-transpose\\platforms\\web",
-  "desc": "This is a cross-platform chord transposition application with features including chord transposition tool, chord dictionary, cross-component communication, and responsive design. Built with React, TypeScript, TDesign components, and Vite for optimal performance.",
-  "id": "8c51edbe2a814a9b84a8227bdc6fd069",
+  "desc": "This is a cross-platform chord transposition web application with features such as chord progression transposition, chord dictionary lookup, responsive design for mobile/tablet/desktop, and adaptive UI components. Built with React, TypeScript, and TDesign components.",
+  "id": "8052f236655347ac99e9bbdf1bf496f2",
   "data": {
-    "spaceKey": "8c51edbe2a814a9b84a8227bdc6fd069",
+    "spaceKey": "8052f236655347ac99e9bbdf1bf496f2",
     "connections": {
-      "webIDE": "https://8c51edbe2a814a9b84a8227bdc6fd069.ap-singapore.cloudstudio.club",
-      "preview": "",
-      "api": "https://8c51edbe2a814a9b84a8227bdc6fd069--api.ap-singapore.cloudstudio.club",
-      "pty": "https://8c51edbe2a814a9b84a8227bdc6fd069--pty.ap-singapore.cloudstudio.club"
+      "webIDE": "https://8052f236655347ac99e9bbdf1bf496f2.ap-singapore.cloudstudio.club",
+      "preview": "https://8052f236655347ac99e9bbdf1bf496f2--{port}.ap-singapore.cloudstudio.club",
+      "api": "https://8052f236655347ac99e9bbdf1bf496f2--api.ap-singapore.cloudstudio.club",
+      "pty": "https://8052f236655347ac99e9bbdf1bf496f2--pty.ap-singapore.cloudstudio.club"
     }
   },
   "config": {
-    "api": "https://8c51edbe2a814a9b84a8227bdc6fd069--api.ap-singapore.cloudstudio.club",
-    "pty": "https://8c51edbe2a814a9b84a8227bdc6fd069--pty.ap-singapore.cloudstudio.club",
+    "api": "https://8052f236655347ac99e9bbdf1bf496f2--api.ap-singapore.cloudstudio.club",
+    "pty": "https://8052f236655347ac99e9bbdf1bf496f2--pty.ap-singapore.cloudstudio.club",
     "region": "ap-shanghai",
-    "spaceKey": "8c51edbe2a814a9b84a8227bdc6fd069"
+    "spaceKey": "8052f236655347ac99e9bbdf1bf496f2"
   }
 }

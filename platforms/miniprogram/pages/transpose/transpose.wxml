@@ -1,0 +1,171 @@
+<!--pages/transpose/transpose.wxml-->
+<view class="container {{systemInfo.isIPhoneX ? 'iphone-x-safe-area' : ''}}">
+  <!-- 输入区域 -->
+  <view class="adaptive-card">
+    <view class="adaptive-card-header">
+      <text class="adaptive-card-title">和弦进行输入</text>
+    </view>
+    <view class="adaptive-card-content">
+      <view class="form-group">
+        <input 
+          class="form-input" 
+          placeholder="例如：4 5 3 6 2 5 1" 
+          value="{{progression}}"
+          bindinput="onProgressionInput"
+          confirm-type="done"
+        />
+      </view>
+      
+      <view class="responsive-grid responsive-grid-2">
+        <view class="grid-item">
+          <view class="form-group">
+            <text class="form-label">源调</text>
+            <picker 
+              mode="selector" 
+              range="{{keys}}" 
+              value="{{sourceKeyIndex}}"
+              bindchange="onSourceKeyChange"
+            >
+              <view class="form-select">{{keys[sourceKeyIndex]}}</view>
+            </picker>
+          </view>
+        </view>
+        
+        <view class="grid-item">
+          <view class="form-group">
+            <text class="form-label">目标调</text>
+            <picker 
+              mode="selector" 
+              range="{{keys}}" 
+              value="{{targetKeyIndex}}"
+              bindchange="onTargetKeyChange"
+            >
+              <view class="form-select">{{keys[targetKeyIndex]}}</view>
+            </picker>
+          </view>
+        </view>
+      </view>
+      
+      <view class="responsive-grid responsive-grid-2">
+        <view class="grid-item">
+          <view class="form-group">
+            <label class="form-label">
+              <switch checked="{{isMinor}}" bindchange="onMinorChange" />
+              <text style="margin-left: 16rpx;">小调</text>
+            </label>
+          </view>
+        </view>
+        
+        <view class="grid-item">
+          <view class="form-group">
+            <label class="form-label">
+              <switch checked="{{useSeventhChords}}" bindchange="onSeventhChange" />
+              <text style="margin-left: 16rpx;">七和弦</text>
+            </label>
+          </view>
+        </view>
+      </view>
+      
+      <view class="responsive-grid responsive-grid-2">
+        <button 
+          class="adaptive-button adaptive-button-primary adaptive-button-{{buttonSize}}"
+          bindtap="transposeChords"
+          disabled="{{!progression.trim()}}"
+        >
+          🔄 转调
+        </button>
+        <button 
+          class="adaptive-button adaptive-button-outline adaptive-button-{{buttonSize}}"
+          bindtap="clearInput"
+        >
+          🗑️ 清空
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 常用进行 -->
+  <view class="adaptive-card">
+    <view class="adaptive-card-header">
+      <text class="adaptive-card-title">常用走向</text>
+    </view>
+    <view class="adaptive-card-content">
+      <view class="progression-grid">
+        <view 
+          wx:for="{{commonProgressions}}" 
+          wx:key="label"
+          class="progression-tag"
+          bindtap="fillProgression"
+          data-value="{{item.value}}"
+        >
+          {{item.label}}
+        </view>
+      </view>
+      
+      <view wx:if="{{recentProgressions.length > 0}}" style="margin-top: 30rpx;">
+        <text class="form-label">最近使用</text>
+        <view class="progression-grid">
+          <view 
+            wx:for="{{recentProgressions}}" 
+            wx:key="*this"
+            class="progression-tag recent"
+            bindtap="fillProgression"
+            data-value="{{item}}"
+          >
+            {{item}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 转换结果 -->
+  <view wx:if="{{result.success && result.data.length > 0}}" class="adaptive-card">
+    <view class="adaptive-card-header">
+      <text class="adaptive-card-title">转换结果</text>
+      <button 
+        class="adaptive-button adaptive-button-text adaptive-button-small"
+        bindtap="copyResult"
+      >
+        📋 复制
+      </button>
+    </view>
+    <view class="adaptive-card-content">
+      <view class="chord-display">
+        <view 
+          wx:for="{{result.data}}" 
+          wx:key="index"
+          class="chord-tag"
+        >
+          {{item.chord}}
+        </view>
+      </view>
+      
+      <button 
+        class="adaptive-button adaptive-button-text adaptive-button-{{buttonSize}}"
+        bindtap="toggleComparison"
+      >
+        {{showComparison ? '隐藏' : '显示'}}对照
+      </button>
+      
+      <view wx:if="{{showComparison}}" class="comparison-list" style="margin-top: 20rpx;">
+        <view 
+          wx:for="{{result.data}}" 
+          wx:key="index"
+          class="comparison-item"
+        >
+          <text class="comparison-original">{{item.original}}</text>
+          <text class="comparison-arrow">→</text>
+          <text class="comparison-target">{{item.chord}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 错误提示 -->
+  <view wx:if="{{!result.success && progression.trim()}}" class="adaptive-card">
+    <view class="adaptive-card-content">
+      <view class="error-message">{{result.error}}</view>
+    </view>
+  </view>
+</view>

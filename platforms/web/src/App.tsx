@@ -45,7 +45,7 @@ function App() {
   };
 
   return (
-    <ConfigProvider>
+      <ConfigProvider globalConfig={{}}>
       <AppContext.Provider value={contextValue}>
         <div className="app">
           <TransposeApp />

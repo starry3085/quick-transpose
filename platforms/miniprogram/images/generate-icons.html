@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate TabBar Icons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .icon-preview {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .download-btn {
+            display: block;
+            margin: 5px auto;
+            padding: 5px 10px;
+            background: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .download-btn:hover {
+            background: #40a9ff;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .instructions {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WeChat Miniprogram TabBar Icons Generator</h1>
+        
+        <div class="instructions">
+            <h3>Instructions:</h3>
+            <ol>
+                <li>Click the "Generate Icons" button below</li>
+                <li>Right-click each icon and select "Save image as..."</li>
+                <li>Save with the exact filenames shown below each icon</li>
+                <li>Place all icons in the <code>platforms/miniprogram/images/</code> directory</li>
+            </ol>
+        </div>
+
+        <button onclick="generateIcons()" style="display: block; margin: 20px auto; padding: 10px 20px; background: #52c41a; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">
+            Generate Icons
+        </button>
+
+        <div id="icons-container"></div>
+    </div>
+
+    <script>
+        function generateIcons() {
+            const container = document.getElementById('icons-container');
+            container.innerHTML = '';
+
+            // Icon configurations
+            const icons = [
+                {
+                    name: 'transpose.png',
+                    title: 'Transpose (Inactive)',
+                    color: '#999999',
+                    draw: drawTransposeIcon
+                },
+                {
+                    name: 'transpose-active.png',
+                    title: 'Transpose (Active)',
+                    color: '#1890ff',
+                    draw: drawTransposeIcon
+                },
+                {
+                    name: 'dictionary.png',
+                    title: 'Dictionary (Inactive)',
+                    color: '#999999',
+                    draw: drawDictionaryIcon
+                },
+                {
+                    name: 'dictionary-active.png',
+                    title: 'Dictionary (Active)',
+                    color: '#1890ff',
+                    draw: drawDictionaryIcon
+                }
+            ];
+
+            icons.forEach(icon => {
+                const iconDiv = document.createElement('div');
+                iconDiv.className = 'icon-preview';
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = 81;
+                canvas.height = 81;
+                
+                const ctx = canvas.getContext('2d');
+                
+                // Clear canvas with transparent background
+                ctx.clearRect(0, 0, 81, 81);
+                
+                // Draw icon
+                icon.draw(ctx, icon.color);
+                
+                const title = document.createElement('div');
+                title.textContent = icon.title;
+                title.style.marginTop = '5px';
+                title.style.fontWeight = 'bold';
+                
+                const filename = document.createElement('div');
+                filename.textContent = icon.name;
+                filename.style.fontSize = '12px';
+                filename.style.color = '#666';
+                
+                iconDiv.appendChild(canvas);
+                iconDiv.appendChild(title);
+                iconDiv.appendChild(filename);
+                
+                container.appendChild(iconDiv);
+            });
+        }
+
+        function drawTransposeIcon(ctx, color) {
+            ctx.fillStyle = color;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            
+            // Draw musical note
+            ctx.beginPath();
+            // Note head (oval)
+            ctx.ellipse(25, 55, 8, 6, -0.3, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Note stem
+            ctx.beginPath();
+            ctx.moveTo(33, 55);
+            ctx.lineTo(33, 25);
+            ctx.stroke();
+            
+            // Note flag
+            ctx.beginPath();
+            ctx.moveTo(33, 25);
+            ctx.quadraticCurveTo(45, 20, 40, 35);
+            ctx.fill();
+            
+            // Draw circular arrows around the note
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            // Top arrow
+            ctx.arc(40, 40, 15, -Math.PI/2, Math.PI/2, false);
+            ctx.stroke();
+            
+            // Arrow head
+            ctx.beginPath();
+            ctx.moveTo(52, 45);
+            ctx.lineTo(48, 42);
+            ctx.lineTo(48, 48);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Bottom arrow
+            ctx.beginPath();
+            ctx.arc(40, 40, 15, Math.PI/2, -Math.PI/2, false);
+            ctx.stroke();
+            
+            // Arrow head
+            ctx.beginPath();
+            ctx.moveTo(28, 35);
+            ctx.lineTo(32, 32);
+            ctx.lineTo(32, 38);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawDictionaryIcon(ctx, color) {
+            ctx.fillStyle = color;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            
+            // Draw book outline
+            ctx.beginPath();
+            ctx.rect(20, 15, 40, 50);
+            ctx.stroke();
+            
+            // Book spine
+            ctx.beginPath();
+            ctx.moveTo(25, 15);
+            ctx.lineTo(25, 65);
+            ctx.stroke();
+            
+            // Draw lines representing text
+            const lines = [25, 32, 39, 46, 53];
+            lines.forEach(y => {
+                ctx.beginPath();
+                ctx.moveTo(30, y);
+                ctx.lineTo(55, y);
+                ctx.stroke();
+            });
+            
+            // Draw musical symbols on some lines
+            ctx.font = '12px Arial';
+            ctx.fillText('♪', 32, 28);
+            ctx.fillText('♫', 45, 42);
+            ctx.fillText('♪', 38, 56);
+        }
+
+        // Auto-generate icons on page load
+        window.onload = function() {
+            generateIcons();
+        };
+    </script>
+</body>
+</html>
