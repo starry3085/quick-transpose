@@ -1,0 +1,118 @@
+<!--pages/dictionary/dictionary.wxml-->
+<view class="container">
+  <!-- 调性选择 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">调性选择</text>
+    </view>
+    <view class="card-content">
+      <view class="row">
+        <view class="col">
+          <text class="label">调性</text>
+          <picker 
+            range="{{keys}}" 
+            value="{{selectedKeyIndex}}"
+            bindchange="onKeyChange"
+          >
+            <view class="picker">{{selectedKey}}</view>
+          </picker>
+        </view>
+        
+        <view class="col switch-col">
+          <view class="switch-group">
+            <text class="switch-label">小调</text>
+            <switch 
+              checked="{{isMinor}}" 
+              bindchange="onMinorToggle"
+              color="#10B981"
+            />
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 和弦表 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">{{selectedKey}}{{isMinor ? '小调' : '大调'}} 和弦表</text>
+    </view>
+    <view class="card-content">
+      <view class="chord-list">
+        <block wx:for="{{chords}}" wx:key="index">
+          <view class="chord-row">
+            <view class="chord-info">
+              <view class="degree-badge">{{index + 1}}</view>
+              <view class="chord-details">
+                <text class="chord-name">{{item}}</text>
+                <text class="chord-meta">{{romanNumerals[index]}} · {{degreeNames[index]}}</text>
+              </view>
+            </view>
+            <button 
+              class="fill-btn"
+              bindtap="fillToTransposer"
+              data-degree="{{index + 1}}"
+            >
+              填入
+            </button>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 和弦说明 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">和弦标记说明</text>
+    </view>
+    <view class="card-content">
+      <view class="legend-list">
+        <view class="legend-item">
+          <text class="legend-label">大三和弦</text>
+          <text class="legend-example">C, F, G</text>
+        </view>
+        <view class="legend-item">
+          <text class="legend-label">小三和弦</text>
+          <text class="legend-example">Dm, Em, Am</text>
+        </view>
+        <view class="legend-item">
+          <text class="legend-label">减三和弦</text>
+          <text class="legend-example">Bdim</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷填入 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">常用进行快捷填入</text>
+    </view>
+    <view class="card-content">
+      <view class="quick-fill-buttons">
+        <button 
+          class="btn btn-outline btn-small"
+          bindtap="fillProgression"
+          data-progression="1 4 5 1"
+        >
+          I-IV-V-I
+        </button>
+        <button 
+          class="btn btn-outline btn-small"
+          bindtap="fillProgression"
+          data-progression="1 6 2 5"
+        >
+          I-vi-ii-V
+        </button>
+        <button 
+          class="btn btn-outline btn-small"
+          bindtap="fillProgression"
+          data-progression="4 5 3 6 2 5 1"
+        >
+          卡农进行
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

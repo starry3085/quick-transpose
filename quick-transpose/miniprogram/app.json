@@ -1,0 +1,36 @@
+{
+  "pages": [
+    "pages/transpose/transpose",
+    "pages/dictionary/dictionary"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#10B981",
+    "navigationBarTitleText": "移调器",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#10B981",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/transpose/transpose",
+        "text": "转换器",
+        "iconPath": "images/transpose.png",
+        "selectedIconPath": "images/transpose-active.png"
+      },
+      {
+        "pagePath": "pages/dictionary/dictionary",
+        "text": "字典",
+        "iconPath": "images/dictionary.png",
+        "selectedIconPath": "images/dictionary-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}
