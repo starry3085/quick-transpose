@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { 
-  Card, 
   Select, 
   Switch, 
-  Button, 
   Tag, 
   MessagePlugin
 } from 'tdesign-react';
 import { ArrowRightIcon } from 'tdesign-icons-react';
 import { useAppContext } from '../App';
+import { AdaptiveCard, AdaptiveButton } from './adaptive';
 import { 
   TransposeEngine, 
   SIMPLE_KEYS, 
@@ -47,7 +46,7 @@ const DictionaryTab: React.FC = () => {
     <div className="dictionary-tab">
       <div className="responsive-grid grid-1">
         {/* 筛选区域 */}
-        <Card title="调式选择" className="filter-card">
+        <AdaptiveCard title="调式选择" className="filter-card">
           <div className="filter-section">
             <div className="key-selection responsive-grid grid-2">
               <div className="key-group">
@@ -73,10 +72,10 @@ const DictionaryTab: React.FC = () => {
               </div>
             </div>
           </div>
-        </Card>
+        </AdaptiveCard>
 
         {/* 度数表 */}
-        <Card 
+        <AdaptiveCard 
           title={`${selectedKey}${isMinor ? '小调' : '大调'} 和弦表`}
           className="chords-card"
         >
@@ -98,21 +97,21 @@ const DictionaryTab: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <Button
+                <AdaptiveButton
                   variant="text"
                   size="small"
                   onClick={() => handleFillToTransposer(index + 1)}
                   icon={<ArrowRightIcon />}
                 >
                   填入
-                </Button>
+                </AdaptiveButton>
               </div>
             ))}
           </div>
-        </Card>
+        </AdaptiveCard>
 
         {/* 和弦标记说明 */}
-        <Card title="和弦标记说明" className="info-card">
+        <AdaptiveCard title="和弦标记说明" className="info-card">
           <div className="chord-types">
             <div className="type-row">
               <span className="type-label">大三和弦</span>
@@ -131,37 +130,37 @@ const DictionaryTab: React.FC = () => {
               <span className="type-examples">C7, Dm7, G7</span>
             </div>
           </div>
-        </Card>
+        </AdaptiveCard>
 
         {/* 快捷操作 */}
-        <Card title="快捷填入" className="quick-actions-card">
+        <AdaptiveCard title="快捷填入" className="quick-actions-card">
           <div className="quick-actions-grid responsive-grid grid-2">
-            <Button
+            <AdaptiveButton
               variant="outline"
               onClick={() => handleQuickFill('1 4 5 1')}
             >
               I-IV-V-I
-            </Button>
-            <Button
+            </AdaptiveButton>
+            <AdaptiveButton
               variant="outline"
               onClick={() => handleQuickFill('6 4 1 5')}
             >
               vi-IV-I-V
-            </Button>
-            <Button
+            </AdaptiveButton>
+            <AdaptiveButton
               variant="outline"
               onClick={() => handleQuickFill('1 6 2 5')}
             >
               I-vi-ii-V
-            </Button>
-            <Button
+            </AdaptiveButton>
+            <AdaptiveButton
               variant="outline"
               onClick={() => handleQuickFill('4 5 3 6 2 5 1')}
             >
               卡农进行
-            </Button>
+            </AdaptiveButton>
           </div>
-        </Card>
+        </AdaptiveCard>
       </div>
     </div>
   );

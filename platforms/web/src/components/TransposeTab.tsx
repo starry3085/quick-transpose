@@ -1,10 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { 
-  Card, 
   Input, 
   Select, 
   Switch, 
-  Button, 
   Tag, 
   Space, 
   Collapse,
@@ -12,6 +10,7 @@ import {
 } from 'tdesign-react';
 import { CopyIcon, SwapIcon, RefreshIcon } from 'tdesign-icons-react';
 import { useAppContext } from '../App';
+import { ResponsiveGrid, AdaptiveCard, AdaptiveButton, usePlatform } from './adaptive';
 import { TransposeEngine, SIMPLE_KEYS, COMMON_PROGRESSIONS, createStorageManager, debounce } from '../utils/shared-import';
 import type { KeyType, TransposeSettings } from '../utils/shared-import';
 import './TransposeTab.less';
@@ -130,7 +129,7 @@ const TransposeTab: React.FC = () => {
     <div className="transpose-tab">
       <div className="responsive-grid grid-1">
         {/* 输入区域 */}
-        <Card title="和弦进行输入" className="input-card">
+        <AdaptiveCard title="和弦进行输入" className="input-card">
           <div className="input-section">
             <div className="progression-input">
               <Input
@@ -141,14 +140,14 @@ const TransposeTab: React.FC = () => {
                 size="large"
               />
               <div className="input-actions">
-                <Button 
+                <AdaptiveButton 
                   variant="outline" 
                   size="small" 
                   onClick={handleClear}
                   icon={<RefreshIcon />}
                 >
                   清空
-                </Button>
+                </AdaptiveButton>
               </div>
             </div>
             
@@ -165,9 +164,8 @@ const TransposeTab: React.FC = () => {
                       <Option key={key} value={key}>{key}</Option>
                     ))}
                   </Select>
-                  <Button 
-                    variant="outline" 
-                    size="large"
+                  <AdaptiveButton 
+                    variant="outline"
                     onClick={handleSwapKeys}
                     icon={<SwapIcon />}
                   />
@@ -205,10 +203,10 @@ const TransposeTab: React.FC = () => {
               </div>
             </div>
           </div>
-        </Card>
+        </AdaptiveCard>
 
         {/* 常用进行 */}
-        <Card title="常用走向" className="progressions-card">
+        <AdaptiveCard title="常用走向" className="progressions-card">
           <div className="progressions-grid">
             {COMMON_PROGRESSIONS.map(prog => (
               <Tag
@@ -239,22 +237,22 @@ const TransposeTab: React.FC = () => {
               </div>
             </div>
           )}
-        </Card>
+        </AdaptiveCard>
 
         {/* 转换结果 */}
         {result.success && result.data.length > 0 && (
-          <Card 
+          <AdaptiveCard 
             title="转换结果" 
             className="result-card"
             actions={
-              <Button 
+              <AdaptiveButton 
                 variant="outline" 
                 size="small"
                 onClick={handleCopy}
                 icon={<CopyIcon />}
               >
                 复制
-              </Button>
+              </AdaptiveButton>
             }
           >
             <div className="result-content">
@@ -270,12 +268,12 @@ const TransposeTab: React.FC = () => {
               </div>
               
               <div className="result-actions">
-                <Button
+                <AdaptiveButton
                   variant="text"
                   onClick={() => setShowComparison(!showComparison)}
                 >
                   {showComparison ? '隐藏' : '显示'}对照
-                </Button>
+                </AdaptiveButton>
               </div>
             </div>
             
@@ -294,16 +292,16 @@ const TransposeTab: React.FC = () => {
                 </CollapsePanel>
               </Collapse>
             )}
-          </Card>
+          </AdaptiveCard>
         )}
 
         {/* 错误提示 */}
         {!result.success && progression.trim() && (
-          <Card className="error-card">
+          <AdaptiveCard className="error-card">
             <div className="error-content">
               <span className="error-text">{result.error}</span>
             </div>
-          </Card>
+          </AdaptiveCard>
         )}
       </div>
     </div>

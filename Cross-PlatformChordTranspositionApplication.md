@@ -50,6 +50,8 @@ Note:
 
 [X] Develop web version of chord dictionary with responsive grid layout and modal details
 
+[X] Deploy web application to CloudStudio for remote access and testing
+
 [ ] Implement platform detection and adaptive UI components for different screen sizes
 
 [ ] Create shared state management solution compatible with both React and miniprogram

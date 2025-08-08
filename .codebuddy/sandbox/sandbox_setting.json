@@ -1,6 +1,6 @@
 {
   "path": "e:\\quick-transpose\\platforms\\web",
-  "desc": "This is a cross-platform chord transposition application with features such as chord progression transposition, chord dictionary lookup, and responsive web interface built with React, TypeScript, and TDesign components.",
+  "desc": "This is a cross-platform chord transposition application with features including chord transposition tool, chord dictionary, cross-component communication, and responsive design. Built with React, TypeScript, TDesign components, and Vite for optimal performance.",
   "id": "8c51edbe2a814a9b84a8227bdc6fd069",
   "data": {
     "spaceKey": "8c51edbe2a814a9b84a8227bdc6fd069",
