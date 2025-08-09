@@ -1,0 +1,138 @@
+<!--pages/dictionary/dictionary.wxml-->
+<view class="container {{systemInfo.isIPhoneX ? 'iphone-x-safe-area' : ''}}">
+  <!-- 筛选区域 -->
+  <view class="adaptive-card">
+    <view class="adaptive-card-header">
+      <text class="adaptive-card-title">调式选择</text>
+    </view>
+    <view class="adaptive-card-content">
+      <view class="responsive-grid responsive-grid-2">
+        <view class="grid-item">
+          <view class="form-group">
+            <text class="form-label">调</text>
+            <picker 
+              mode="selector" 
+              range="{{keys}}" 
+              value="{{selectedKeyIndex}}"
+              bindchange="onKeyChange"
+            >
+              <view class="form-select">{{keys[selectedKeyIndex]}}</view>
+            </picker>
+          </view>
+        </view>
+        
+        <view class="grid-item">
+          <view class="form-group">
+            <label class="form-label">
+              <switch checked="{{isMinor}}" bindchange="onMinorChange" />
+              <text style="margin-left: 16rpx;">小调</text>
+            </label>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 和弦表 -->
+  <view class="adaptive-card">
+    <view class="adaptive-card-header">
+      <text class="adaptive-card-title">{{keys[selectedKeyIndex]}}{{isMinor ? '小调' : '大调'}} 和弦表</text>
+    </view>
+    <view class="adaptive-card-content">
+      <view class="chord-list">
+        <view 
+          wx:for="{{chords}}" 
+          wx:key="index"
+          class="chord-row"
+        >
+          <view class="chord-info">
+            <view class="degree-badge">
+              <text class="degree-number">{{index + 1}}</text>
+            </view>
+            <view class="chord-details">
+              <text class="chord-name">{{item}}</text>
+              <view class="chord-meta">
+                <text class="roman">{{romanNumerals[index]}}</text>
+                <text class="separator">·</text>
+                <text class="degree-name">{{degreeNames[index]}}</text>
+              </view>
+            </view>
+          </view>
+          <button 
+            class="adaptive-button adaptive-button-text adaptive-button-{{buttonSize}}"
+            bindtap="fillToTransposer"
+            data-degree="{{index + 1}}"
+          >
+            填入 →
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 和弦标记说明 -->
+  <view class="adaptive-card">
+    <view class="adaptive-card-header">
+      <text class="adaptive-card-title">和弦标记说明</text>
+    </view>
+    <view class="adaptive-card-content">
+      <view class="chord-types">
+        <view class="type-row">
+          <text class="type-label">大三和弦</text>
+          <text class="type-examples">C, F, G</text>
+        </view>
+        <view class="type-row">
+          <text class="type-label">小三和弦</text>
+          <text class="type-examples">Dm, Em, Am</text>
+        </view>
+        <view class="type-row">
+          <text class="type-label">减三和弦</text>
+          <text class="type-examples">Bdim</text>
+        </view>
+        <view class="type-row">
+          <text class="type-label">七和弦</text>
+          <text class="type-examples">C7, Dm7, G7</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷填入 -->
+  <view class="adaptive-card">
+    <view class="adaptive-card-header">
+      <text class="adaptive-card-title">快捷填入</text>
+    </view>
+    <view class="adaptive-card-content">
+      <view class="quick-actions-grid responsive-grid responsive-grid-2">
+        <button
+          class="adaptive-button adaptive-button-outline adaptive-button-{{buttonSize}}"
+          bindtap="quickFill"
+          data-progression="1 4 5 1"
+        >
+          I-IV-V-I
+        </button>
+        <button
+          class="adaptive-button adaptive-button-outline adaptive-button-{{buttonSize}}"
+          bindtap="quickFill"
+          data-progression="6 4 1 5"
+        >
+          vi-IV-I-V
+        </button>
+        <button
+          class="adaptive-button adaptive-button-outline adaptive-button-{{buttonSize}}"
+          bindtap="quickFill"
+          data-progression="1 6 2 5"
+        >
+          I-vi-ii-V
+        </button>
+        <button
+          class="adaptive-button adaptive-button-outline adaptive-button-{{buttonSize}}"
+          bindtap="quickFill"
+          data-progression="4 5 3 6 2 5 1"
+        >
+          卡农进行
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

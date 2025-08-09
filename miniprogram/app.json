@@ -1,0 +1,36 @@
+{
+  "pages": [
+    "pages/transpose/transpose",
+    "pages/dictionary/dictionary"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1976d2",
+    "navigationBarTitleText": "Quick Transpose",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5"
+  },
+  "tabBar": {
+    "color": "#666666",
+    "selectedColor": "#1976d2",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/transpose/transpose",
+        "text": "转调工具",
+        "iconPath": "images/transpose.png",
+        "selectedIconPath": "images/transpose-active.png"
+      },
+      {
+        "pagePath": "pages/dictionary/dictionary",
+        "text": "和弦字典",
+        "iconPath": "images/dictionary.png",
+        "selectedIconPath": "images/dictionary-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

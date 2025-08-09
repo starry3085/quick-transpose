@@ -1,6 +1,10 @@
+"use strict";
 /**
  * 防抖工具函数
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.debounce = debounce;
+exports.throttle = throttle;
 /**
  * 防抖函数
  * @param func 要防抖的函数
@@ -8,7 +12,7 @@
  * @param immediate 是否立即执行
  * @returns 防抖后的函数
  */
-export function debounce(func, wait, immediate = false) {
+function debounce(func, wait, immediate = false) {
     let timeout = null;
     return function executedFunction(...args) {
         const later = () => {
@@ -32,7 +36,7 @@ export function debounce(func, wait, immediate = false) {
  * @param limit 时间限制（毫秒）
  * @returns 节流后的函数
  */
-export function throttle(func, limit) {
+function throttle(func, limit) {
     let inThrottle = false;
     return function executedFunction(...args) {
         if (!inThrottle) {
@@ -44,3 +48,4 @@ export function throttle(func, limit) {
         }
     };
 }
+//# sourceMappingURL=debounce.js.map

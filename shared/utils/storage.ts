@@ -10,7 +10,7 @@ import type { StorageAdapter, TransposeSettings } from '../types/chord';
 export class WebStorageAdapter implements StorageAdapter {
   get<T>(key: string, defaultValue?: T): T | null {
     try {
-      const item = localStorage.getItem(key);
+      const item = typeof localStorage !== 'undefined' ? localStorage.getItem(key) : null;
       if (item === null) {
         return defaultValue || null;
       }
@@ -23,7 +23,9 @@ export class WebStorageAdapter implements StorageAdapter {
 
   set<T>(key: string, value: T): void {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(key, JSON.stringify(value));
+      }
     } catch (error) {
       console.error('Storage set error:', error);
     }
@@ -31,7 +33,9 @@ export class WebStorageAdapter implements StorageAdapter {
 
   remove(key: string): void {
     try {
-      localStorage.removeItem(key);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem(key);
+      }
     } catch (error) {
       console.error('Storage remove error:', error);
     }

@@ -3,38 +3,7 @@
  * 支持Web端localStorage和小程序端wx.storage
  */
 
-// WeChat miniprogram global types
-declare global {
-  const wx: {
-    getStorageSync: (key: string) => any;
-    setStorageSync: (key: string, data: any) => void;
-    removeStorageSync: (key: string) => void;
-    getStorage: (options: {
-      key: string;
-      success: (res: { data: any }) => void;
-      fail: (error: any) => void;
-    }) => void;
-    setStorage: (options: {
-      key: string;
-      data: any;
-      success: () => void;
-      fail: (error: any) => void;
-    }) => void;
-    removeStorage: (options: {
-      key: string;
-      success: () => void;
-      fail: (error: any) => void;
-    }) => void;
-    clearStorage: (options: {
-      success: () => void;
-      fail: (error: any) => void;
-    }) => void;
-    getStorageInfo: (options: {
-      success: (res: { keys: string[] }) => void;
-      fail: () => void;
-    }) => void;
-  };
-}
+import '../types/global';
 
 export interface StorageAdapter {
   getItem(key: string): Promise<string | null>;
@@ -136,7 +105,7 @@ export class MiniprogramStorageAdapter implements StorageAdapter {
             key,
             data: value,
             success: () => resolve(),
-            fail: (error: any) => reject(error)
+            fail: () => reject(new Error('Clear storage failed'))
           });
         } else {
           reject(new Error('微信环境不可用'));

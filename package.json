@@ -1,50 +1,22 @@
 {
-  "name": "quick-transpose-monorepo",
+  "name": "chord-transpose-tool",
   "version": "1.0.0",
-  "description": "Cross-platform chord transposition application",
   "private": true,
   "scripts": {
-    "build": "node scripts/build-all.js",
-    "build:all": "node scripts/build-all.js",
-    "build:shared": "cd shared && npm run build",
-    "build:web": "npm run build:shared && cd platforms/web && npm run build",
-    "build:miniprogram": "node scripts/build-all.js miniprogram",
-    "dev": "npm run dev:shared & npm run dev:web",
-    "dev:shared": "cd shared && npm run dev",
-    "dev:web": "cd platforms/web && npm run dev",
-    "dev:miniprogram": "echo 'Use WeChat Developer Tools to develop miniprogram'",
-    "deploy:web": "npm run build:web && echo 'Deploy web build to your hosting service'",
-    "deploy:miniprogram": "echo 'Use WeChat Developer Tools to upload miniprogram'",
-    "clean": "npm run clean:shared && npm run clean:web",
-    "clean:shared": "cd shared && npm run clean",
-    "clean:web": "cd platforms/web && rm -rf dist",
-    "install:all": "npm install && cd shared && npm install && cd ../platforms/web && npm install",
-    "lint": "cd platforms/web && npm run lint",
-    "test": "node platforms/miniprogram/test-checklist.js",
-    "optimize": "node platforms/miniprogram/optimize.js"
+    "build:shared": "cd shared && tsc",
+    "build:web": "npm run build:shared && cd web && npm run build",
+    "build:miniprogram": "npm run build:shared && node build-tools/build-miniprogram.js",
+    "dev:web": "cd web && npm run dev",
+    "dev:shared": "cd shared && tsc --watch",
+    "install:all": "npm install && cd web && npm install",
+    "clean": "rm -rf shared/dist web/dist miniprogram/utils/shared",
+    "start": "npm run dev:web"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "typescript": "^5.9.2",
-    "rimraf": "^5.0.0"
+    "typescript": "^5.0.0"
   },
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/your-username/quick-transpose.git"
-  },
-  "keywords": [
-    "chord",
-    "transposition",
-    "music",
-    "cross-platform",
-    "react",
-    "miniprogram",
-    "typescript"
-  ],
-  "author": "Your Name",
+  "description": "Cross-platform chord transposition tool for web and WeChat Mini Program",
+  "keywords": ["chord", "transposition", "music", "cross-platform", "wechat-miniprogram"],
+  "author": "",
   "license": "MIT"
 }

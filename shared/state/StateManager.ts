@@ -3,14 +3,7 @@
  * Compatible with both React and WeChat Miniprogram
  */
 
-// WeChat miniprogram global types
-declare global {
-  const wx: {
-    getStorageSync: (key: string) => any;
-    setStorageSync: (key: string, data: any) => void;
-    removeStorageSync: (key: string) => void;
-  };
-}
+import '../types/global';
 
 export interface StateListener<T = any> {
   (newState: T, oldState: T): void;

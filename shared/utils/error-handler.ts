@@ -193,7 +193,7 @@ export class ErrorHandler {
     } else {
       // 小程序平台错误显示
       console.error(`[错误] ${error.message}`, error);
-      if (typeof wx !== 'undefined') {
+      if (typeof wx !== 'undefined' && wx) {
         wx.showToast({
           title: error.message,
           icon: 'none',

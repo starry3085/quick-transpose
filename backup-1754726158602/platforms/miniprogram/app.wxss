@@ -1,0 +1,337 @@
+/**app.wxss**/
+/* 全局样式 */
+page {
+  background-color: #f5f5f5;
+  font-family: -apple-system-font, Helvetica Neue, Helvetica, sans-serif;
+}
+
+/* 通用容器 */
+.container {
+  padding: 30rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 自适应卡片组件 */
+.adaptive-card {
+  background: white;
+  border-radius: 16rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.adaptive-card-header {
+  padding: 30rpx 30rpx 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.adaptive-card-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.adaptive-card-content {
+  padding: 30rpx;
+}
+
+/* 自适应按钮组件 */
+.adaptive-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 32rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.adaptive-button::after {
+  border: none;
+}
+
+/* 按钮变体 */
+.adaptive-button-primary {
+  background: #1976d2;
+  color: white;
+}
+
+.adaptive-button-primary:active {
+  background: #1565c0;
+}
+
+.adaptive-button-outline {
+  background: transparent;
+  color: #1976d2;
+  border: 2rpx solid #1976d2;
+}
+
+.adaptive-button-outline:active {
+  background: #1976d2;
+  color: white;
+}
+
+.adaptive-button-text {
+  background: transparent;
+  color: #1976d2;
+  border: none;
+}
+
+.adaptive-button-text:active {
+  background: rgba(25, 118, 210, 0.1);
+}
+
+/* 按钮尺寸 */
+.adaptive-button-small {
+  padding: 16rpx 24rpx;
+  font-size: 24rpx;
+  min-height: 64rpx;
+}
+
+.adaptive-button-medium {
+  padding: 20rpx 32rpx;
+  font-size: 28rpx;
+  min-height: 72rpx;
+}
+
+.adaptive-button-large {
+  padding: 24rpx 40rpx;
+  font-size: 32rpx;
+  min-height: 80rpx;
+}
+
+/* 响应式网格 */
+.responsive-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.responsive-grid-1 {
+  flex-direction: column;
+}
+
+.responsive-grid-2 > .grid-item {
+  flex: 1;
+  min-width: calc(50% - 10rpx);
+}
+
+.responsive-grid-3 > .grid-item {
+  flex: 1;
+  min-width: calc(33.333% - 14rpx);
+}
+
+/* 表单样式 */
+.form-group {
+  margin-bottom: 30rpx;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 16rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-input {
+  width: 100%;
+  padding: 24rpx 20rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  background: white;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  border-color: #1976d2;
+}
+
+.form-select {
+  width: 100%;
+  padding: 24rpx 20rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  background: white;
+  box-sizing: border-box;
+}
+
+/* 和弦显示 */
+.chord-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-bottom: 30rpx;
+}
+
+.chord-tag {
+  background: #1976d2;
+  color: white;
+  padding: 16rpx 24rpx;
+  border-radius: 8rpx;
+  font-weight: 600;
+  font-size: 32rpx;
+  min-width: 80rpx;
+  text-align: center;
+}
+
+/* 进行标签 */
+.progression-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.progression-tag {
+  background: white;
+  color: #1976d2;
+  border: 2rpx solid #1976d2;
+  padding: 16rpx 24rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.progression-tag:active {
+  background: #1976d2;
+  color: white;
+}
+
+.progression-tag.recent {
+  border-color: #ccc;
+  color: #666;
+}
+
+.progression-tag.recent:active {
+  background: #666;
+  color: white;
+}
+
+/* 结果区域 */
+.result-section {
+  margin-top: 30rpx;
+  padding: 30rpx;
+  background: #f8f9fa;
+  border-radius: 12rpx;
+}
+
+.result-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+/* 对照表 */
+.comparison-list {
+  margin-top: 20rpx;
+}
+
+.comparison-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+
+.comparison-item:last-child {
+  border-bottom: none;
+}
+
+.comparison-original {
+  color: #666;
+  font-size: 28rpx;
+}
+
+.comparison-arrow {
+  color: #999;
+  font-size: 24rpx;
+  margin: 0 20rpx;
+}
+
+.comparison-target {
+  color: #1976d2;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+/* 错误提示 */
+.error-message {
+  color: #f44336;
+  font-size: 24rpx;
+  text-align: center;
+  padding: 20rpx;
+  background: #ffebee;
+  border-radius: 8rpx;
+  margin-top: 20rpx;
+}
+
+/* 加载状态 */
+.loading {
+  text-align: center;
+  padding: 60rpx;
+  color: #999;
+  font-size: 28rpx;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 80rpx 40rpx;
+  color: #999;
+}
+
+.empty-state-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-state-text {
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+/* 设备适配 */
+.iphone-x-safe-area {
+  padding-bottom: 68rpx;
+}
+
+/* 响应式断点 */
+@media (max-width: 750rpx) {
+  .responsive-grid-2 > .grid-item {
+    min-width: 100%;
+  }
+  
+  .responsive-grid-3 > .grid-item {
+    min-width: calc(50% - 10rpx);
+  }
+}
+
+@media (max-width: 500rpx) {
+  .container {
+    padding: 20rpx;
+  }
+  
+  .adaptive-card-content {
+    padding: 20rpx;
+  }
+  
+  .responsive-grid-3 > .grid-item {
+    min-width: 100%;
+  }
+}

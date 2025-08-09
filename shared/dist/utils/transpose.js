@@ -1,11 +1,14 @@
+"use strict";
 /**
  * 和弦移调核心算法
  */
-import { CHORD_MAPS, ROMAN_NUMERALS } from '../constants/chord-data';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TransposeEngine = void 0;
+const chord_data_1 = require("../constants/chord-data");
 /**
  * 移调核心函数
  */
-export class TransposeEngine {
+class TransposeEngine {
     /**
      * 执行和弦移调
      * @param params 移调参数
@@ -23,9 +26,9 @@ export class TransposeEngine {
         }
         try {
             const chordType = isMinor ? 'minor' : 'major';
-            const sourceChords = CHORD_MAPS[chordType][sourceKey];
-            const targetChords = CHORD_MAPS[chordType][targetKey];
-            const romanNumerals = ROMAN_NUMERALS[chordType];
+            const sourceChords = chord_data_1.CHORD_MAPS[chordType][sourceKey];
+            const targetChords = chord_data_1.CHORD_MAPS[chordType][targetKey];
+            const romanNumerals = chord_data_1.ROMAN_NUMERALS[chordType];
             if (!sourceChords || !targetChords) {
                 return {
                     success: false,
@@ -79,7 +82,7 @@ export class TransposeEngine {
      */
     static getChordsByKey(key, isMinor = false) {
         const chordType = isMinor ? 'minor' : 'major';
-        return [...(CHORD_MAPS[chordType][key] || [])];
+        return [...(chord_data_1.CHORD_MAPS[chordType][key] || [])];
     }
     /**
      * 获取罗马数字标记
@@ -87,7 +90,7 @@ export class TransposeEngine {
      * @returns 罗马数字列表
      */
     static getRomanNumerals(isMinor = false) {
-        return [...ROMAN_NUMERALS[isMinor ? 'minor' : 'major']];
+        return [...chord_data_1.ROMAN_NUMERALS[isMinor ? 'minor' : 'major']];
     }
     /**
      * 获取和弦的详细信息
@@ -137,3 +140,5 @@ export class TransposeEngine {
         return progressions.map(progression => this.transpose({ progression, sourceKey, targetKey, isMinor }));
     }
 }
+exports.TransposeEngine = TransposeEngine;
+//# sourceMappingURL=transpose.js.map
