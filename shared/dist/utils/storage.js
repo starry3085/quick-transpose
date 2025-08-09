@@ -1,17 +1,13 @@
-"use strict";
 /**
  * 跨平台存储抽象层
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.StorageManager = exports.MiniprogramStorageAdapter = exports.WebStorageAdapter = void 0;
-exports.createStorageManager = createStorageManager;
 /**
  * Web平台存储适配器
  */
-class WebStorageAdapter {
+export class WebStorageAdapter {
     get(key, defaultValue) {
         try {
-            const item = typeof localStorage !== 'undefined' ? localStorage.getItem(key) : null;
+            const item = localStorage.getItem(key);
             if (item === null) {
                 return defaultValue || null;
             }
@@ -24,9 +20,7 @@ class WebStorageAdapter {
     }
     set(key, value) {
         try {
-            if (typeof localStorage !== 'undefined') {
-                localStorage.setItem(key, JSON.stringify(value));
-            }
+            localStorage.setItem(key, JSON.stringify(value));
         }
         catch (error) {
             console.error('Storage set error:', error);
@@ -34,9 +28,7 @@ class WebStorageAdapter {
     }
     remove(key) {
         try {
-            if (typeof localStorage !== 'undefined') {
-                localStorage.removeItem(key);
-            }
+            localStorage.removeItem(key);
         }
         catch (error) {
             console.error('Storage remove error:', error);
@@ -51,11 +43,10 @@ class WebStorageAdapter {
         }
     }
 }
-exports.WebStorageAdapter = WebStorageAdapter;
 /**
  * 小程序存储适配器
  */
-class MiniprogramStorageAdapter {
+export class MiniprogramStorageAdapter {
     get(key, defaultValue) {
         try {
             // @ts-ignore - wx is available in miniprogram environment
@@ -95,11 +86,10 @@ class MiniprogramStorageAdapter {
         }
     }
 }
-exports.MiniprogramStorageAdapter = MiniprogramStorageAdapter;
 /**
  * 存储管理器
  */
-class StorageManager {
+export class StorageManager {
     constructor(adapter) {
         this.adapter = adapter;
     }
@@ -173,11 +163,10 @@ class StorageManager {
         }
     }
 }
-exports.StorageManager = StorageManager;
 /**
  * 创建平台适配的存储管理器
  */
-function createStorageManager() {
+export function createStorageManager() {
     // 检测运行环境
     const wx = globalThis.wx;
     if (typeof wx !== 'undefined' && wx.getStorageSync) {
@@ -214,4 +203,3 @@ class MemoryStorageAdapter {
         this.storage.clear();
     }
 }
-//# sourceMappingURL=storage.js.map

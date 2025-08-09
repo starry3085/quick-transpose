@@ -1,10 +1,7 @@
-"use strict";
 /**
  * 输入验证工具函数
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Validator = void 0;
-class Validator {
+export class Validator {
     /**
      * 验证和弦进行输入
      * @param progression 和弦进行字符串
@@ -85,5 +82,3 @@ class Validator {
         return cleaned.split(/\s+/).join(' ');
     }
 }
-exports.Validator = Validator;
-//# sourceMappingURL=validator.js.map
