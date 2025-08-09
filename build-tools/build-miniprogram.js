@@ -1,45 +1,59 @@
+'use strict';
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-async function buildMiniProgram() {
+process.on('uncaughtException', (err) => {
+  console.error('❌ Build failed:', err && err.message ? err.message : err);
+  process.exit(1);
+});
+
+function buildMiniProgram() {
   console.log('🚀 Building WeChat Mini Program...');
-  
-  try {
-    // Ensure output directory exists
-    const sharedOutputDir = 'miniprogram/utils/shared';
-    if (!fs.existsSync(sharedOutputDir)) {
-      fs.mkdirSync(sharedOutputDir, { recursive: true });
-    }
-    
-    // Compile shared code for miniprogram
-    console.log('📦 Compiling shared TypeScript code...');
-    execSync('cd shared && npx tsc --target ES5 --module CommonJS --outDir ../miniprogram/utils/shared --declaration false', { stdio: 'inherit' });
-    
-    // Validate miniprogram structure
-    validateStructure();
-    
-    console.log('✅ Mini Program build completed successfully');
-    
-  } catch (error) {
-    console.error('❌ Build failed:', error.message);
-    process.exit(1);
+
+  const sharedOutputDir = path.join('miniprogram', 'utils', 'shared');
+
+  // Clean output to avoid stale files
+  if (fs.existsSync(sharedOutputDir)) {
+    fs.rmSync(sharedOutputDir, { recursive: true, force: true });
   }
+  fs.mkdirSync(sharedOutputDir, { recursive: true });
+
+  console.log('📦 Compiling shared TypeScript code...');
+  // Compile shared using tsconfig, override for Mini Program runtime
+  execSync(
+    'npx tsc -p shared/tsconfig.json --target ES5 --module CommonJS --outDir miniprogram/utils/shared --declaration false',
+    { stdio: 'inherit' }
+  );
+
+  validateStructure();
+  validateOutput(sharedOutputDir);
+
+  console.log('✅ Mini Program build completed successfully');
 }
 
 function validateStructure() {
   const required = [
-    'miniprogram/app.js',
-    'miniprogram/app.json',
-    'miniprogram/project.config.json'
+    path.join('miniprogram', 'app.js'),
+    path.join('miniprogram', 'app.json'),
+    path.join('miniprogram', 'project.config.json'),
   ];
-  
-  const missing = required.filter(file => !fs.existsSync(file));
+
+  const missing = required.filter((file) => !fs.existsSync(file));
   if (missing.length > 0) {
     throw new Error(`Missing required files: ${missing.join(', ')}`);
   }
-  
+
   console.log('✅ Mini Program structure validation passed');
+}
+
+function validateOutput(sharedOutputDir) {
+  const expected = path.join(sharedOutputDir, 'index.js');
+  if (!fs.existsSync(expected)) {
+    console.error(`❌ Expected compiled file not found: ${expected}`);
+    process.exit(1);
+  }
+  console.log('✅ Compiled shared output validation passed');
 }
 
 if (require.main === module) {

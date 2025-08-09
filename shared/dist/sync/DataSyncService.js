@@ -1,13 +1,9 @@
-"use strict";
 /**
  * 数据同步服务
  * 处理跨平台数据同步和冲突解决
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DataSyncService = void 0;
-exports.createDataSyncService = createDataSyncService;
-const CrossPlatformStorage_1 = require("../storage/CrossPlatformStorage");
-class DataSyncService {
+import { STORAGE_KEYS } from '../storage/CrossPlatformStorage';
+export class DataSyncService {
     constructor(storage, options) {
         this.storage = storage;
         this.syncEndpoint = options?.syncEndpoint;
@@ -135,7 +131,7 @@ class DataSyncService {
      * 获取所有本地数据
      */
     async getAllLocalData() {
-        const keys = Object.values(CrossPlatformStorage_1.STORAGE_KEYS);
+        const keys = Object.values(STORAGE_KEYS);
         const syncData = [];
         for (const key of keys) {
             try {
@@ -299,9 +295,7 @@ class DataSyncService {
         };
     }
 }
-exports.DataSyncService = DataSyncService;
 // 工厂函数
-function createDataSyncService(storage, options) {
+export function createDataSyncService(storage, options) {
     return new DataSyncService(storage, options);
 }
-//# sourceMappingURL=DataSyncService.js.map

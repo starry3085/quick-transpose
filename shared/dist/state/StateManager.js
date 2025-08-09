@@ -1,15 +1,8 @@
-"use strict";
 /**
  * Cross-Platform State Management
  * Compatible with both React and WeChat Miniprogram
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.StateManager = void 0;
-exports.createStateManager = createStateManager;
-exports.useStateManager = useStateManager;
-exports.createMiniprogramStateMixin = createMiniprogramStateMixin;
-require("../types/global");
-class StateManager {
+export class StateManager {
     constructor(initialState, options = {}) {
         this.listeners = new Map();
         this.globalListeners = new Set();
@@ -180,17 +173,16 @@ class StateManager {
         }
     }
 }
-exports.StateManager = StateManager;
 /**
  * Create a state manager instance
  */
-function createStateManager(initialState, options) {
+export function createStateManager(initialState, options) {
     return new StateManager(initialState, options);
 }
 /**
  * React hook for using state manager
  */
-function useStateManager(stateManager) {
+export function useStateManager(stateManager) {
     // This would need React imports in actual implementation
     // For now, providing the interface
     const state = stateManager.getState();
@@ -200,7 +192,7 @@ function useStateManager(stateManager) {
 /**
  * Miniprogram mixin for using state manager
  */
-function createMiniprogramStateMixin(stateManager) {
+export function createMiniprogramStateMixin(stateManager) {
     return {
         onLoad() {
             // Subscribe to state changes and update page data
@@ -226,4 +218,3 @@ function createMiniprogramStateMixin(stateManager) {
         }
     };
 }
-//# sourceMappingURL=StateManager.js.map

@@ -2,7 +2,41 @@
  * 跨平台数据持久化和同步
  * 支持Web端localStorage和小程序端wx.storage
  */
-import '../types/global';
+declare global {
+    const wx: {
+        getStorageSync: (key: string) => any;
+        setStorageSync: (key: string, data: any) => void;
+        removeStorageSync: (key: string) => void;
+        getStorage: (options: {
+            key: string;
+            success: (res: {
+                data: any;
+            }) => void;
+            fail: (error: any) => void;
+        }) => void;
+        setStorage: (options: {
+            key: string;
+            data: any;
+            success: () => void;
+            fail: (error: any) => void;
+        }) => void;
+        removeStorage: (options: {
+            key: string;
+            success: () => void;
+            fail: (error: any) => void;
+        }) => void;
+        clearStorage: (options: {
+            success: () => void;
+            fail: (error: any) => void;
+        }) => void;
+        getStorageInfo: (options: {
+            success: (res: {
+                keys: string[];
+            }) => void;
+            fail: () => void;
+        }) => void;
+    };
+}
 export interface StorageAdapter {
     getItem(key: string): Promise<string | null>;
     setItem(key: string, value: string): Promise<void>;

@@ -1,14 +1,9 @@
-"use strict";
 /**
  * 跨平台数据持久化和同步
  * 支持Web端localStorage和小程序端wx.storage
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.STORAGE_KEYS = exports.CrossPlatformStorage = exports.MiniprogramStorageAdapter = exports.WebStorageAdapter = void 0;
-exports.createCrossPlatformStorage = createCrossPlatformStorage;
-require("../types/global");
 // Web端存储适配器
-class WebStorageAdapter {
+export class WebStorageAdapter {
     async getItem(key) {
         try {
             return localStorage.getItem(key);
@@ -55,9 +50,8 @@ class WebStorageAdapter {
         }
     }
 }
-exports.WebStorageAdapter = WebStorageAdapter;
 // 小程序端存储适配器
-class MiniprogramStorageAdapter {
+export class MiniprogramStorageAdapter {
     async getItem(key) {
         return new Promise((resolve) => {
             try {
@@ -86,7 +80,7 @@ class MiniprogramStorageAdapter {
                         key,
                         data: value,
                         success: () => resolve(),
-                        fail: () => reject(new Error('Clear storage failed'))
+                        fail: (error) => reject(error)
                     });
                 }
                 else {
@@ -158,9 +152,8 @@ class MiniprogramStorageAdapter {
         });
     }
 }
-exports.MiniprogramStorageAdapter = MiniprogramStorageAdapter;
 // 跨平台存储管理器
-class CrossPlatformStorage {
+export class CrossPlatformStorage {
     constructor(platform, syncOptions) {
         this.platform = platform;
         this.adapter = platform === 'web'
@@ -335,13 +328,12 @@ class CrossPlatformStorage {
         };
     }
 }
-exports.CrossPlatformStorage = CrossPlatformStorage;
 // 工厂函数
-function createCrossPlatformStorage(platform, syncOptions) {
+export function createCrossPlatformStorage(platform, syncOptions) {
     return new CrossPlatformStorage(platform, syncOptions);
 }
 // 预定义的存储键常量
-exports.STORAGE_KEYS = {
+export const STORAGE_KEYS = {
     TRANSPOSE_HISTORY: 'transpose_history',
     DICTIONARY_FAVORITES: 'dictionary_favorites',
     USER_PREFERENCES: 'user_preferences',
@@ -349,4 +341,3 @@ exports.STORAGE_KEYS = {
     CHORD_PROGRESSIONS: 'chord_progressions',
     RECENT_SEARCHES: 'recent_searches'
 };
-//# sourceMappingURL=CrossPlatformStorage.js.map

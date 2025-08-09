@@ -1,11 +1,7 @@
-/**
- * 共享模块统一导出
- */
-export * from './types/chord';
-export * from './constants/chord-data';
-export * from './utils/transpose';
-export * from './utils/validator';
-export * from './utils/storage';
-export * from './utils/debounce';
-export * from './utils/chord-dictionary';
+export * from './types';
+export * from './constants';
+export * from './utils';
+export * from './state/StateManager';
+export * from './storage/CrossPlatformStorage';
+export * from './sync/DataSyncService';
 //# sourceMappingURL=index.d.ts.map

@@ -1,31 +1,25 @@
-"use strict";
 /**
  * 存储集成示例
  * 展示如何在Web和小程序中使用跨平台存储和同步功能
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppStorageManager = void 0;
-exports.createAppStorageManager = createAppStorageManager;
-exports.createWebStorageManager = createWebStorageManager;
-exports.createMiniprogramStorageManager = createMiniprogramStorageManager;
-const CrossPlatformStorage_1 = require("../storage/CrossPlatformStorage");
-const DataSyncService_1 = require("../sync/DataSyncService");
+import { createCrossPlatformStorage, STORAGE_KEYS } from '../storage/CrossPlatformStorage';
+import { createDataSyncService } from '../sync/DataSyncService';
 /**
  * 应用存储管理器
  * 封装所有存储操作的高级接口
  */
-class AppStorageManager {
+export class AppStorageManager {
     constructor(platform) {
         this.platform = platform;
         // 创建存储实例
-        this.storage = (0, CrossPlatformStorage_1.createCrossPlatformStorage)(platform, {
+        this.storage = createCrossPlatformStorage(platform, {
             enableSync: true,
             syncInterval: 60000, // 1分钟同步一次
             maxRetries: 3,
             conflictResolution: 'timestamp'
         });
         // 创建同步服务
-        this.syncService = (0, DataSyncService_1.createDataSyncService)(this.storage, {
+        this.syncService = createDataSyncService(this.storage, {
             syncEndpoint: 'https://api.quick-transpose.com/sync',
             userId: this.getUserId()
         });
@@ -35,7 +29,7 @@ class AppStorageManager {
      * 转调历史记录管理
      */
     async getTransposeHistory() {
-        const history = await this.storage.getItem(CrossPlatformStorage_1.STORAGE_KEYS.TRANSPOSE_HISTORY);
+        const history = await this.storage.getItem(STORAGE_KEYS.TRANSPOSE_HISTORY);
         return history || [];
     }
     async addTransposeHistory(item) {
@@ -52,32 +46,32 @@ class AppStorageManager {
         if (updatedHistory.length > maxItems) {
             updatedHistory.splice(maxItems);
         }
-        await this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.TRANSPOSE_HISTORY, updatedHistory);
+        await this.storage.setItem(STORAGE_KEYS.TRANSPOSE_HISTORY, updatedHistory);
         console.log('[存储管理器] 已添加转调历史记录');
     }
     async clearTransposeHistory() {
-        await this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.TRANSPOSE_HISTORY, []);
+        await this.storage.setItem(STORAGE_KEYS.TRANSPOSE_HISTORY, []);
         console.log('[存储管理器] 已清空转调历史记录');
     }
     /**
      * 字典收藏管理
      */
     async getDictionaryFavorites() {
-        const favorites = await this.storage.getItem(CrossPlatformStorage_1.STORAGE_KEYS.DICTIONARY_FAVORITES);
+        const favorites = await this.storage.getItem(STORAGE_KEYS.DICTIONARY_FAVORITES);
         return favorites || [];
     }
     async addToFavorites(chord) {
         const favorites = await this.getDictionaryFavorites();
         if (!favorites.includes(chord)) {
             favorites.push(chord);
-            await this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.DICTIONARY_FAVORITES, favorites);
+            await this.storage.setItem(STORAGE_KEYS.DICTIONARY_FAVORITES, favorites);
             console.log(`[存储管理器] 已添加收藏: ${chord}`);
         }
     }
     async removeFromFavorites(chord) {
         const favorites = await this.getDictionaryFavorites();
         const updatedFavorites = favorites.filter(c => c !== chord);
-        await this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.DICTIONARY_FAVORITES, updatedFavorites);
+        await this.storage.setItem(STORAGE_KEYS.DICTIONARY_FAVORITES, updatedFavorites);
         console.log(`[存储管理器] 已移除收藏: ${chord}`);
     }
     async toggleFavorite(chord) {
@@ -96,7 +90,7 @@ class AppStorageManager {
      * 用户偏好设置管理
      */
     async getUserPreferences() {
-        const preferences = await this.storage.getItem(CrossPlatformStorage_1.STORAGE_KEYS.USER_PREFERENCES);
+        const preferences = await this.storage.getItem(STORAGE_KEYS.USER_PREFERENCES);
         // 返回默认设置
         return {
             defaultKey: 0,
@@ -110,14 +104,14 @@ class AppStorageManager {
     async updateUserPreferences(updates) {
         const currentPreferences = await this.getUserPreferences();
         const updatedPreferences = { ...currentPreferences, ...updates };
-        await this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.USER_PREFERENCES, updatedPreferences);
+        await this.storage.setItem(STORAGE_KEYS.USER_PREFERENCES, updatedPreferences);
         console.log('[存储管理器] 已更新用户偏好设置');
     }
     /**
      * 和弦进行管理
      */
     async getChordProgressions() {
-        const progressions = await this.storage.getItem(CrossPlatformStorage_1.STORAGE_KEYS.CHORD_PROGRESSIONS);
+        const progressions = await this.storage.getItem(STORAGE_KEYS.CHORD_PROGRESSIONS);
         return progressions || [];
     }
     async saveChordProgression(progression) {
@@ -128,21 +122,21 @@ class AppStorageManager {
             createdAt: Date.now()
         };
         progressions.push(newProgression);
-        await this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.CHORD_PROGRESSIONS, progressions);
+        await this.storage.setItem(STORAGE_KEYS.CHORD_PROGRESSIONS, progressions);
         console.log(`[存储管理器] 已保存和弦进行: ${newProgression.name}`);
         return newProgression.id;
     }
     async deleteChordProgression(id) {
         const progressions = await this.getChordProgressions();
         const updatedProgressions = progressions.filter(p => p.id !== id);
-        await this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.CHORD_PROGRESSIONS, updatedProgressions);
+        await this.storage.setItem(STORAGE_KEYS.CHORD_PROGRESSIONS, updatedProgressions);
         console.log(`[存储管理器] 已删除和弦进行: ${id}`);
     }
     /**
      * 最近搜索管理
      */
     async getRecentSearches() {
-        const searches = await this.storage.getItem(CrossPlatformStorage_1.STORAGE_KEYS.RECENT_SEARCHES);
+        const searches = await this.storage.getItem(STORAGE_KEYS.RECENT_SEARCHES);
         return searches || [];
     }
     async addRecentSearch(query) {
@@ -155,21 +149,21 @@ class AppStorageManager {
         if (updatedSearches.length > 10) {
             updatedSearches.splice(10);
         }
-        await this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.RECENT_SEARCHES, updatedSearches);
+        await this.storage.setItem(STORAGE_KEYS.RECENT_SEARCHES, updatedSearches);
     }
     async clearRecentSearches() {
-        await this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.RECENT_SEARCHES, []);
+        await this.storage.setItem(STORAGE_KEYS.RECENT_SEARCHES, []);
         console.log('[存储管理器] 已清空最近搜索');
     }
     /**
      * 应用状态管理
      */
     async saveAppState(state) {
-        await this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.APP_STATE, state);
+        await this.storage.setItem(STORAGE_KEYS.APP_STATE, state);
         console.log('[存储管理器] 已保存应用状态');
     }
     async loadAppState() {
-        return await this.storage.getItem(CrossPlatformStorage_1.STORAGE_KEYS.APP_STATE);
+        return await this.storage.getItem(STORAGE_KEYS.APP_STATE);
     }
     /**
      * 数据同步操作
@@ -230,11 +224,11 @@ class AppStorageManager {
     async importData(data) {
         console.log('[存储管理器] 开始导入数据...');
         await Promise.all([
-            this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.TRANSPOSE_HISTORY, data.transposeHistory),
-            this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.DICTIONARY_FAVORITES, data.dictionaryFavorites),
-            this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.USER_PREFERENCES, data.userPreferences),
-            this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.CHORD_PROGRESSIONS, data.chordProgressions),
-            this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.RECENT_SEARCHES, data.recentSearches)
+            this.storage.setItem(STORAGE_KEYS.TRANSPOSE_HISTORY, data.transposeHistory),
+            this.storage.setItem(STORAGE_KEYS.DICTIONARY_FAVORITES, data.dictionaryFavorites),
+            this.storage.setItem(STORAGE_KEYS.USER_PREFERENCES, data.userPreferences),
+            this.storage.setItem(STORAGE_KEYS.CHORD_PROGRESSIONS, data.chordProgressions),
+            this.storage.setItem(STORAGE_KEYS.RECENT_SEARCHES, data.recentSearches)
         ]);
         console.log('[存储管理器] 数据导入完成');
     }
@@ -248,7 +242,7 @@ class AppStorageManager {
         const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
         const filteredHistory = history.filter(item => item.timestamp > thirtyDaysAgo);
         if (filteredHistory.length !== history.length) {
-            await this.storage.setItem(CrossPlatformStorage_1.STORAGE_KEYS.TRANSPOSE_HISTORY, filteredHistory);
+            await this.storage.setItem(STORAGE_KEYS.TRANSPOSE_HISTORY, filteredHistory);
             console.log(`[存储管理器] 已清理 ${history.length - filteredHistory.length} 条过期历史记录`);
         }
         // 停止同步
@@ -265,16 +259,14 @@ class AppStorageManager {
         return Date.now().toString(36) + Math.random().toString(36).substr(2);
     }
 }
-exports.AppStorageManager = AppStorageManager;
 // 工厂函数
-function createAppStorageManager(platform) {
+export function createAppStorageManager(platform) {
     return new AppStorageManager(platform);
 }
 // 平台特定的实例创建
-function createWebStorageManager() {
+export function createWebStorageManager() {
     return createAppStorageManager('web');
 }
-function createMiniprogramStorageManager() {
+export function createMiniprogramStorageManager() {
     return createAppStorageManager('miniprogram');
 }
-//# sourceMappingURL=StorageIntegration.js.map

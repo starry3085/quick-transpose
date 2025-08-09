@@ -2,7 +2,13 @@
  * Cross-Platform State Management
  * Compatible with both React and WeChat Miniprogram
  */
-import '../types/global';
+declare global {
+    const wx: {
+        getStorageSync: (key: string) => any;
+        setStorageSync: (key: string, data: any) => void;
+        removeStorageSync: (key: string) => void;
+    };
+}
 export interface StateListener<T = any> {
     (newState: T, oldState: T): void;
 }

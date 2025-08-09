@@ -2,6 +2,7 @@
   "name": "chord-transpose-tool",
   "version": "1.0.0",
   "private": true,
+  "workspaces": ["shared", "web", "miniprogram"],
   "scripts": {
     "build:shared": "cd shared && tsc",
     "build:web": "npm run build:shared && cd web && npm run build",
@@ -10,7 +11,9 @@
     "dev:shared": "cd shared && tsc --watch",
     "install:all": "npm install && cd web && npm install",
     "clean": "rm -rf shared/dist web/dist miniprogram/utils/shared",
-    "start": "npm run dev:web"
+    "start": "npm run dev:web",
+    "install:workspaces": "npm install --workspaces",
+    "build:all": "npm run build:shared && npm run build:web && npm run build:miniprogram"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

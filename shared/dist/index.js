@@ -1,13 +1,7 @@
-/**
- * 共享模块统一导出
- */
-// Types
-export * from './types/chord';
-// Constants
-export * from './constants/chord-data';
-// Utils
-export * from './utils/transpose';
-export * from './utils/validator';
-export * from './utils/storage';
-export * from './utils/debounce';
-export * from './utils/chord-dictionary';
+// 主入口文件，导出所有共享模块
+export * from './types';
+export * from './constants';
+export * from './utils';
+export * from './state/StateManager';
+export * from './storage/CrossPlatformStorage';
+export * from './sync/DataSyncService';

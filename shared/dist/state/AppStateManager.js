@@ -1,17 +1,8 @@
-"use strict";
 /**
  * Application-specific State Management
  * Defines the global state structure for the chord transposition app
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppStateActions = void 0;
-exports.createWebStateManager = createWebStateManager;
-exports.createMiniprogramStateManager = createMiniprogramStateManager;
-exports.getWebStateManager = getWebStateManager;
-exports.getMiniprogramStateManager = getMiniprogramStateManager;
-exports.createWebAppActions = createWebAppActions;
-exports.createMiniprogramAppActions = createMiniprogramAppActions;
-const StateManager_1 = require("./StateManager");
+import { createStateManager } from './StateManager';
 // Initial state
 const initialAppState = {
     transpose: {
@@ -40,22 +31,22 @@ const initialAppState = {
     }
 };
 // Create platform-specific state managers
-function createWebStateManager() {
-    return (0, StateManager_1.createStateManager)(initialAppState, {
+export function createWebStateManager() {
+    return createStateManager(initialAppState, {
         platform: 'web',
         enablePersistence: true,
         persistKey: 'quick-transpose-state'
     });
 }
-function createMiniprogramStateManager() {
-    return (0, StateManager_1.createStateManager)(initialAppState, {
+export function createMiniprogramStateManager() {
+    return createStateManager(initialAppState, {
         platform: 'miniprogram',
         enablePersistence: true,
         persistKey: 'quick-transpose-state'
     });
 }
 // State action creators for common operations
-class AppStateActions {
+export class AppStateActions {
     constructor(stateManager) {
         this.stateManager = stateManager;
     }
@@ -206,27 +197,25 @@ class AppStateActions {
         return this.stateManager.subscribeGlobal(listener);
     }
 }
-exports.AppStateActions = AppStateActions;
 // Export singleton instances (to be initialized by each platform)
 let webStateManager = null;
 let miniprogramStateManager = null;
-function getWebStateManager() {
+export function getWebStateManager() {
     if (!webStateManager) {
         webStateManager = createWebStateManager();
     }
     return webStateManager;
 }
-function getMiniprogramStateManager() {
+export function getMiniprogramStateManager() {
     if (!miniprogramStateManager) {
         miniprogramStateManager = createMiniprogramStateManager();
     }
     return miniprogramStateManager;
 }
 // Create action creators for each platform
-function createWebAppActions() {
+export function createWebAppActions() {
     return new AppStateActions(getWebStateManager());
 }
-function createMiniprogramAppActions() {
+export function createMiniprogramAppActions() {
     return new AppStateActions(getMiniprogramStateManager());
 }
-//# sourceMappingURL=AppStateManager.js.map
