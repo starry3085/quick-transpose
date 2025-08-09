@@ -1,6 +1,6 @@
 {
   "path": "e:\\quick-transpose\\platforms\\web",
-  "desc": "This is a cross-platform chord transposition application with features including chord transposition tools, chord dictionary, responsive design for desktop/tablet/mobile, and cross-platform data synchronization. The web version uses React with TDesign components and supports real-time chord transposition and comprehensive chord reference. Fixed module import issues with explicit exports.",
+  "desc": "This is a cross-platform chord transposition application with features including chord transposition tools, chord dictionary, responsive design for desktop/tablet/mobile, and cross-platform data synchronization. The web version uses React with TDesign components and supports real-time chord transposition and comprehensive chord reference. Fixed module import issues using relative paths instead of alias paths.",
   "id": "8052f236655347ac99e9bbdf1bf496f2",
   "data": {
     "spaceKey": "8052f236655347ac99e9bbdf1bf496f2",

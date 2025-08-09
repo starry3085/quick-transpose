@@ -17,7 +17,7 @@
     "deploy:miniprogram": "echo 'Use WeChat Developer Tools to upload miniprogram'",
     "clean": "npm run clean:shared && npm run clean:web",
     "clean:shared": "cd shared && npm run clean",
-    "clean:web": "cd platforms/web && npm run build && rm -rf dist",
+    "clean:web": "cd platforms/web && rm -rf dist",
     "install:all": "npm install && cd shared && npm install && cd ../platforms/web && npm install",
     "lint": "cd platforms/web && npm run lint",
     "test": "node platforms/miniprogram/test-checklist.js",
@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "typescript": "^5.0.0",
+    "typescript": "^5.9.2",
     "rimraf": "^5.0.0"
   },
   "engines": {
