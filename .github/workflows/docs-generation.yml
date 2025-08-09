@@ -1,0 +1,124 @@
+name: Auto-Generate Documentation
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'src/**/*.{ts,tsx,js,jsx}'
+      - 'web/src/**/*.{ts,tsx,js,jsx}'
+      - 'shared/**/*.{ts,js}'
+      - 'miniprogram/**/*.{js,json}'
+      - 'package.json'
+      - 'README.md'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/**/*.{ts,tsx,js,jsx}'
+      - 'web/src/**/*.{ts,tsx,js,jsx}'
+      - 'shared/**/*.{ts,js}'
+      - 'miniprogram/**/*.{js,json}'
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch full history for changelog generation
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        npm install
+        npm install chokidar typescript
+    
+    - name: Generate documentation
+      run: npm run docs:generate
+    
+    - name: Check for documentation changes
+      id: docs-changes
+      run: |
+        if git diff --quiet docs/generated/; then
+          echo "changes=false" >> $GITHUB_OUTPUT
+        else
+          echo "changes=true" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Commit and push documentation updates
+      if: steps.docs-changes.outputs.changes == 'true' && github.event_name == 'push'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add docs/generated/
+        git commit -m "docs: auto-update generated documentation [skip ci]"
+        git push
+    
+    - name: Upload documentation artifacts
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v4
+      with:
+        name: generated-docs
+        path: docs/generated/
+        retention-days: 7
+
+  validate-docs:
+    runs-on: ubuntu-latest
+    needs: generate-docs
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm install
+    
+    - name: Validate documentation links
+      run: |
+        # Check for broken internal links in markdown files
+        find docs -name "*.md" -exec grep -l "\[.*\](.*\.md)" {} \; | while read file; do
+          echo "Checking links in $file"
+          grep -o "\[.*\](.*\.md)" "$file" | sed 's/.*](\(.*\))/\1/' | while read link; do
+            if [[ "$link" =~ ^http ]]; then
+              continue  # Skip external links
+            fi
+            target_file="docs/$link"
+            if [[ ! -f "$target_file" ]]; then
+              echo "❌ Broken link in $file: $link (target: $target_file)"
+              exit 1
+            else
+              echo "✅ Valid link: $link"
+            fi
+          done
+        done
+    
+    - name: Check documentation completeness
+      run: |
+        # Ensure all required documentation files exist
+        required_files=(
+          "docs/README.md"
+          "docs/ARCHITECTURE.md"
+          "docs/CROSS_PLATFORM_DEVELOPMENT_GUIDE.md"
+          "docs/generated/README.md"
+        )
+        
+        for file in "${required_files[@]}"; do
+          if [[ ! -f "$file" ]]; then
+            echo "❌ Missing required documentation file: $file"
+            exit 1
+          else
+            echo "✅ Found: $file"
+          fi
+        done

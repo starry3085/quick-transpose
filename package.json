@@ -1,25 +1,43 @@
 {
-  "name": "chord-transpose-tool",
+  "name": "quick-transpose",
   "version": "1.0.0",
-  "private": true,
-  "workspaces": ["shared", "web", "miniprogram"],
+  "description": "Cross-platform music chord transposition tool",
+  "main": "index.js",
   "scripts": {
-    "build:shared": "cd shared && tsc",
-    "build:web": "npm run build:shared && cd web && npm run build",
-    "build:miniprogram": "npm run build:shared && node build-tools/build-miniprogram.js",
+    "docs:generate": "node scripts/generate-docs.js",
+    "docs:watch": "node scripts/docs-watcher.js",
+    "docs:serve": "cd docs && python -m http.server 8080 || cd docs && python3 -m http.server 8080",
+    "build:all": "npm run build:shared && npm run build:desktop && npm run build:web",
+    "build:shared": "cd shared && npm run build",
+    "build:desktop": "cd src && npm run build",
+    "build:web": "cd web && npm run build",
+    "test:all": "npm run test:shared && npm run test:desktop && npm run test:web",
+    "test:shared": "cd shared && npm test",
+    "test:desktop": "cd src && npm test",
+    "test:web": "cd web && npm test",
+    "dev:desktop": "cd src && npm run dev",
     "dev:web": "cd web && npm run dev",
-    "dev:shared": "cd shared && tsc --watch",
-    "install:all": "npm install && cd web && npm install",
-    "clean": "rm -rf shared/dist web/dist miniprogram/utils/shared",
-    "start": "npm run dev:web",
-    "install:workspaces": "npm install --workspaces",
-    "build:all": "npm run build:shared && npm run build:web && npm run build:miniprogram"
+    "install:all": "npm install && cd shared && npm install && cd ../src && npm install && cd ../web && npm install",
+    "clean": "rm -rf node_modules shared/node_modules src/node_modules web/node_modules",
+    "postinstall": "npm run docs:generate"
   },
+  "keywords": [
+    "music",
+    "chord",
+    "transpose",
+    "cross-platform",
+    "electron",
+    "react",
+    "miniprogram"
+  ],
+  "author": "Quick Transpose Team",
+  "license": "MIT",
   "devDependencies": {
+    "chokidar": "^3.5.3",
     "typescript": "^5.0.0"
   },
-  "description": "Cross-platform chord transposition tool for web and WeChat Mini Program",
-  "keywords": ["chord", "transposition", "music", "cross-platform", "wechat-miniprogram"],
-  "author": "",
-  "license": "MIT"
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
 }

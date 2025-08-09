@@ -1,0 +1,6 @@
+# Generated Documentation Directory
+
+This directory contains automatically generated documentation files.
+These files are created by the `scripts/generate-docs.js` script and should not be manually edited.
+
+The directory is kept in version control to ensure the generated documentation structure is maintained.

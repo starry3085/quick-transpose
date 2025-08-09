@@ -1,53 +1,239 @@
-# 架构与目录说明
+# Quick Transpose Architecture Guide
 
-本项目是跨平台的和弦转调小工具，平台覆盖 Web 与微信小程序。采用“渐进式优化”策略，保持现有可工作的构建系统，并进行结构与文档优化。
+## Overview
 
-## 目录结构（核心）
+Quick Transpose is a cross-platform music chord transposition tool designed with a **multi-platform strategy** that balances code reuse with platform-specific optimization. The architecture follows the "**Adaptive Architecture**" philosophy, prioritizing business value and user experience over theoretical code purity.
 
-- /shared
-  - 跨平台共享逻辑（TypeScript）：和弦数据、转调算法、字典、校验、状态管理、存储、同步等
-  - 通过 `npm run build:shared` 编译产物供 Web 与小程序复用
-- /web
-  - React + Vite 的前端应用
-  - 使用 shadcn 组件与 Tailwind（详见 web/package.json 与 src/）
-- /miniprogram
-  - 原生微信小程序目录，符合官方规范
-  - app.(js/json/wxss)、pages、components、utils 结构完整
-  - 共享逻辑编译后复制到 `miniprogram/utils/shared/`
-- /build-tools
-  - 小程序构建辅助脚本（例如 `build-miniprogram.js`）
-- /scripts
-  - 跨平台脚本与辅助工具（如测试、重构脚本）
-- /docs
-  - 文档目录（本文件）
-  - /docs/archive：历史方案/评审类文档的归档区
+## Architecture Principles
 
-## 构建与运行
+### 1. Platform-Specific + Shared Core Pattern
+- **Shared Business Logic**: Common chord transposition algorithms and core utilities
+- **Platform Adaptation**: Each platform implements its own UI and system integration
+- **Independent Deployment**: Platforms can be deployed and versioned independently
 
-- 构建共享逻辑：`npm run build:shared`
-- Web 开发：`npm run dev:web`
-- 构建 Web：`npm run build:web`
-- 构建小程序：`npm run build:miniprogram`
-  - 会将 `shared` 的编译产物复制到 `miniprogram/utils/shared/`
+### 2. Separation of Concerns
+- **Business Logic** (`shared/`): Platform-agnostic core functionality
+- **Platform Implementation**: Platform-specific UI, storage, and system integration
+- **Build Systems**: Independent build configurations for each platform
 
-## 代码共享策略
+## Project Structure
 
-- 单一真源：所有与平台无关的业务逻辑集中在 `/shared`，由 Web 与小程序共同依赖
-- 平台适配：平台相关的 UI、交互与配置保持在各自包内（/web、/miniprogram）
-- 约束：`/shared` 不应引入 DOM 或平台特有 API，保持纯 TypeScript/逻辑层
+```
+quick-transpose/
+├── src/                 # Desktop Application (Electron-based)
+│   ├── main/           # Main process code
+│   ├── renderer/       # Renderer process code
+│   └── shared/         # Desktop-specific utilities
+├── web/                # Web Application (Browser-based)
+│   ├── src/           # React application source
+│   ├── public/        # Static assets
+│   └── dist/          # Build output
+├── miniprogram/        # WeChat Mini Program
+│   ├── pages/         # Mini program pages
+│   ├── components/    # Custom components
+│   └── utils/         # Mini program utilities
+├── shared/             # Cross-Platform Core Logic
+│   ├── core/          # Business logic
+│   ├── types/         # TypeScript definitions
+│   └── utils/         # Common utilities
+└── docs/              # Documentation
+```
 
-## 小程序合规要点
+## Platform Implementations
 
-- 目录与配置符合：https://developers.weixin.qq.com/miniprogram/dev/framework/
-- 入口与全局：`app.js/app.json/app.wxss`
-- 页面：`pages/**` 每个页面包含 `.js/.json/.wxml/.wxss`
-- 组件：`components/**`
-- 工具与共享：`utils/**` 以及 `utils/shared/**`（共享逻辑编译产物）
+### Desktop Application (`src/`)
+**Target**: Professional users requiring offline functionality and system integration
 
-## 渐进式优化路线（摘要）
+**Key Features**:
+- File system access for chord sheet management
+- System tray integration
+- Offline-first operation
+- Native OS integration
 
-1) 清理冗余目录（已完成）  
-2) 文档结构标准化（进行中/本次提交完成）  
-3) Workspace/脚本优化（待办）  
-4) 小程序配置与构建校验（待办）  
-5) README 与开发指南持续完善（待办）
+**Technology Stack**:
+- Electron for cross-platform desktop deployment
+- React for UI components
+- Node.js for system integration
+
+### Web Application (`web/`)
+**Target**: General users needing convenient online access
+
+**Key Features**:
+- Browser-based accessibility
+- Cloud synchronization
+- Cross-device compatibility
+- Social sharing capabilities
+
+**Technology Stack**:
+- React with TypeScript
+- Modern web APIs
+- Progressive Web App (PWA) capabilities
+
+### WeChat Mini Program (`miniprogram/`)
+**Target**: Mobile users in the WeChat ecosystem
+
+**Key Features**:
+- Lightweight and fast startup
+- WeChat social integration
+- Mobile-optimized interface
+- Offline capability within WeChat
+
+**Technology Stack**:
+- WeChat Mini Program framework
+- Custom component system
+- WeChat APIs for social features
+
+## Shared Core Architecture
+
+### Design Pattern: Adapter Pattern
+
+```typescript
+// Platform Adapter Interface
+interface PlatformAdapter {
+  storage: StorageInterface;
+  ui: UIInterface;
+  audio?: AudioInterface;
+}
+
+// Core Engine
+class TransposeEngine {
+  private adapter: PlatformAdapter;
+  
+  constructor(adapter: PlatformAdapter) {
+    this.adapter = adapter;
+  }
+  
+  // Platform-agnostic business logic
+  transpose(chord: Chord, steps: number): Chord {
+    // Chord transposition algorithm
+  }
+  
+  // Platform-specific persistence
+  async saveState(): Promise<void> {
+    await this.adapter.storage.save(this.state);
+  }
+}
+```
+
+### Core Modules
+
+#### 1. Chord Processing (`shared/core/`)
+- Chord parsing and validation
+- Transposition algorithms
+- Music theory utilities
+- Scale and key management
+
+#### 2. State Management (`shared/state/`)
+- Application state definitions
+- State persistence interfaces
+- Cross-platform state synchronization
+
+#### 3. Utilities (`shared/utils/`)
+- Common helper functions
+- Data validation
+- Error handling
+- Logging utilities
+
+## Build and Deployment Strategy
+
+### Independent Build Systems
+Each platform maintains its own build configuration:
+
+```json
+{
+  "desktop": "Electron Builder → Native installers",
+  "web": "Vite → Static files → CDN deployment",
+  "miniprogram": "WeChat DevTools → Mini Program package"
+}
+```
+
+### Dependency Management
+- **Shared Dependencies**: Managed in root `package.json`
+- **Platform Dependencies**: Managed in platform-specific `package.json`
+- **Version Synchronization**: Automated dependency updates across platforms
+
+## Data Flow Architecture
+
+### 1. User Input Processing
+```
+User Input → Platform UI → Shared Core → Business Logic → State Update
+```
+
+### 2. State Persistence
+```
+State Change → Platform Adapter → Storage Interface → Platform-Specific Storage
+```
+
+### 3. Cross-Platform Synchronization
+```
+Local State → Sync Service → Cloud Storage → Other Platform Instances
+```
+
+## Performance Considerations
+
+### Desktop Application
+- **Memory Management**: Efficient Electron process management
+- **File I/O**: Optimized file system operations
+- **Startup Time**: Lazy loading of non-critical components
+
+### Web Application
+- **Bundle Size**: Code splitting and lazy loading
+- **Caching**: Service worker for offline functionality
+- **Rendering**: Virtual DOM optimization
+
+### Mini Program
+- **Package Size**: 2MB main package limit optimization
+- **Startup Performance**: Minimal initial load
+- **Memory Usage**: Efficient component lifecycle management
+
+## Security Architecture
+
+### Data Protection
+- **Local Storage**: Encrypted sensitive data storage
+- **Network Communication**: HTTPS/WSS for all external communication
+- **User Privacy**: Minimal data collection, user consent management
+
+### Platform-Specific Security
+- **Desktop**: Code signing and secure auto-updates
+- **Web**: Content Security Policy (CSP) and HTTPS enforcement
+- **Mini Program**: WeChat security sandbox compliance
+
+## Testing Strategy
+
+### Unit Testing
+- **Shared Core**: Comprehensive test coverage for business logic
+- **Platform Adapters**: Mock-based testing for platform interfaces
+- **Integration**: Cross-platform integration test suite
+
+### End-to-End Testing
+- **Desktop**: Electron testing with Spectron
+- **Web**: Browser automation with Playwright
+- **Mini Program**: WeChat DevTools testing framework
+
+## Monitoring and Analytics
+
+### Error Tracking
+- **Centralized Logging**: Unified error reporting across platforms
+- **Performance Monitoring**: Real-time performance metrics
+- **User Analytics**: Privacy-compliant usage analytics
+
+### Platform-Specific Monitoring
+- **Desktop**: Crash reporting and performance profiling
+- **Web**: Browser compatibility and performance tracking
+- **Mini Program**: WeChat-specific analytics and performance metrics
+
+## Future Architecture Considerations
+
+### Scalability
+- **Micro-frontend Architecture**: Further platform decoupling
+- **Serverless Backend**: Cloud functions for shared services
+- **Real-time Collaboration**: WebSocket-based collaborative features
+
+### Platform Expansion
+- **Mobile Apps**: Native iOS and Android applications
+- **Browser Extensions**: Chrome/Firefox extension versions
+- **Voice Assistants**: Alexa/Google Assistant integration
+
+---
+
+*Architecture Guide - Last Updated: January 2025*
