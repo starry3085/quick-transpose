@@ -3,45 +3,15 @@
  * 展示如何在Web和小程序中使用跨平台存储和同步功能
  */
 
-import { createCrossPlatformStorage, STORAGE_KEYS } from '../storage/CrossPlatformStorage';
-import { createDataSyncService } from '../sync/DataSyncService';
-import { AppState } from '../state/AppStateManager';
-
-// 应用数据接口
-export interface TransposeHistoryItem {
-  original: string;
-  transposed: string;
-  key: number;
-  timestamp: number;
-}
-
-export interface UserPreferences {
-  defaultKey: number;
-  showHistory: boolean;
-  maxHistoryItems: number;
-  autoSave: boolean;
-  theme: 'light' | 'dark';
-}
-
-export interface ChordProgression {
-  id: string;
-  name: string;
-  chords: string[];
-  key: string;
-  isFavorite: boolean;
-  createdAt: number;
-}
+import { createCrossPlatformStorage, STORAGE_KEYS } from '../storage/CrossPlatformStorage.js';
+import { createDataSyncService } from '../sync/DataSyncService.js';
 
 /**
  * 应用存储管理器
  * 封装所有存储操作的高级接口
  */
 export class AppStorageManager {
-  private storage: ReturnType<typeof createCrossPlatformStorage>;
-  private syncService: ReturnType<typeof createDataSyncService>;
-  private platform: 'web' | 'miniprogram';
-
-  constructor(platform: 'web' | 'miniprogram') {
+  constructor(platform) {
     this.platform = platform;
     
     // 创建存储实例
@@ -64,14 +34,14 @@ export class AppStorageManager {
   /**
    * 转调历史记录管理
    */
-  async getTransposeHistory(): Promise<TransposeHistoryItem[]> {
-    const history = await this.storage.getItem<TransposeHistoryItem[]>(STORAGE_KEYS.TRANSPOSE_HISTORY);
+  async getTransposeHistory() {
+    const history = await this.storage.getItem(STORAGE_KEYS.TRANSPOSE_HISTORY);
     return history || [];
   }
 
-  async addTransposeHistory(item: Omit<TransposeHistoryItem, 'timestamp'>): Promise<void> {
+  async addTransposeHistory(item) {
     const history = await this.getTransposeHistory();
-    const newItem: TransposeHistoryItem = {
+    const newItem = {
       ...item,
       timestamp: Date.now()
     };
@@ -91,7 +61,7 @@ export class AppStorageManager {
     console.log('[存储管理器] 已添加转调历史记录');
   }
 
-  async clearTransposeHistory(): Promise<void> {
+  async clearTransposeHistory() {
     await this.storage.setItem(STORAGE_KEYS.TRANSPOSE_HISTORY, []);
     console.log('[存储管理器] 已清空转调历史记录');
   }
@@ -99,12 +69,12 @@ export class AppStorageManager {
   /**
    * 字典收藏管理
    */
-  async getDictionaryFavorites(): Promise<string[]> {
-    const favorites = await this.storage.getItem<string[]>(STORAGE_KEYS.DICTIONARY_FAVORITES);
+  async getDictionaryFavorites() {
+    const favorites = await this.storage.getItem(STORAGE_KEYS.DICTIONARY_FAVORITES);
     return favorites || [];
   }
 
-  async addToFavorites(chord: string): Promise<void> {
+  async addToFavorites(chord) {
     const favorites = await this.getDictionaryFavorites();
     if (!favorites.includes(chord)) {
       favorites.push(chord);
@@ -113,14 +83,14 @@ export class AppStorageManager {
     }
   }
 
-  async removeFromFavorites(chord: string): Promise<void> {
+  async removeFromFavorites(chord) {
     const favorites = await this.getDictionaryFavorites();
     const updatedFavorites = favorites.filter(c => c !== chord);
     await this.storage.setItem(STORAGE_KEYS.DICTIONARY_FAVORITES, updatedFavorites);
     console.log(`[存储管理器] 已移除收藏: ${chord}`);
   }
 
-  async toggleFavorite(chord: string): Promise<boolean> {
+  async toggleFavorite(chord) {
     const favorites = await this.getDictionaryFavorites();
     const isFavorite = favorites.includes(chord);
     
@@ -136,8 +106,8 @@ export class AppStorageManager {
   /**
    * 用户偏好设置管理
    */
-  async getUserPreferences(): Promise<UserPreferences> {
-    const preferences = await this.storage.getItem<UserPreferences>(STORAGE_KEYS.USER_PREFERENCES);
+  async getUserPreferences() {
+    const preferences = await this.storage.getItem(STORAGE_KEYS.USER_PREFERENCES);
     
     // 返回默认设置
     return {
@@ -150,7 +120,7 @@ export class AppStorageManager {
     };
   }
 
-  async updateUserPreferences(updates: Partial<UserPreferences>): Promise<void> {
+  async updateUserPreferences(updates) {
     const currentPreferences = await this.getUserPreferences();
     const updatedPreferences = { ...currentPreferences, ...updates };
     
@@ -161,14 +131,14 @@ export class AppStorageManager {
   /**
    * 和弦进行管理
    */
-  async getChordProgressions(): Promise<ChordProgression[]> {
-    const progressions = await this.storage.getItem<ChordProgression[]>(STORAGE_KEYS.CHORD_PROGRESSIONS);
+  async getChordProgressions() {
+    const progressions = await this.storage.getItem(STORAGE_KEYS.CHORD_PROGRESSIONS);
     return progressions || [];
   }
 
-  async saveChordProgression(progression: Omit<ChordProgression, 'id' | 'createdAt'>): Promise<string> {
+  async saveChordProgression(progression) {
     const progressions = await this.getChordProgressions();
-    const newProgression: ChordProgression = {
+    const newProgression = {
       ...progression,
       id: this.generateId(),
       createdAt: Date.now()
@@ -181,7 +151,7 @@ export class AppStorageManager {
     return newProgression.id;
   }
 
-  async deleteChordProgression(id: string): Promise<void> {
+  async deleteChordProgression(id) {
     const progressions = await this.getChordProgressions();
     const updatedProgressions = progressions.filter(p => p.id !== id);
     
@@ -192,12 +162,12 @@ export class AppStorageManager {
   /**
    * 最近搜索管理
    */
-  async getRecentSearches(): Promise<string[]> {
-    const searches = await this.storage.getItem<string[]>(STORAGE_KEYS.RECENT_SEARCHES);
+  async getRecentSearches() {
+    const searches = await this.storage.getItem(STORAGE_KEYS.RECENT_SEARCHES);
     return searches || [];
   }
 
-  async addRecentSearch(query: string): Promise<void> {
+  async addRecentSearch(query) {
     const searches = await this.getRecentSearches();
     
     // 移除重复项
@@ -214,7 +184,7 @@ export class AppStorageManager {
     await this.storage.setItem(STORAGE_KEYS.RECENT_SEARCHES, updatedSearches);
   }
 
-  async clearRecentSearches(): Promise<void> {
+  async clearRecentSearches() {
     await this.storage.setItem(STORAGE_KEYS.RECENT_SEARCHES, []);
     console.log('[存储管理器] 已清空最近搜索');
   }
@@ -222,19 +192,19 @@ export class AppStorageManager {
   /**
    * 应用状态管理
    */
-  async saveAppState(state: Partial<AppState>): Promise<void> {
+  async saveAppState(state) {
     await this.storage.setItem(STORAGE_KEYS.APP_STATE, state);
     console.log('[存储管理器] 已保存应用状态');
   }
 
-  async loadAppState(): Promise<Partial<AppState> | null> {
-    return await this.storage.getItem<Partial<AppState>>(STORAGE_KEYS.APP_STATE);
+  async loadAppState() {
+    return await this.storage.getItem(STORAGE_KEYS.APP_STATE);
   }
 
   /**
    * 数据同步操作
    */
-  async performSync(): Promise<void> {
+  async performSync() {
     try {
       console.log('[存储管理器] 开始数据同步...');
       const result = await this.syncService.performFullSync();
@@ -273,15 +243,7 @@ export class AppStorageManager {
   /**
    * 数据导出和导入
    */
-  async exportData(): Promise<{
-    transposeHistory: TransposeHistoryItem[];
-    dictionaryFavorites: string[];
-    userPreferences: UserPreferences;
-    chordProgressions: ChordProgression[];
-    recentSearches: string[];
-    exportTime: number;
-    platform: string;
-  }> {
+  async exportData() {
     const [
       transposeHistory,
       dictionaryFavorites,
@@ -307,7 +269,7 @@ export class AppStorageManager {
     };
   }
 
-  async importData(data: Awaited<ReturnType<AppStorageManager['exportData']>>): Promise<void> {
+  async importData(data) {
     console.log('[存储管理器] 开始导入数据...');
     
     await Promise.all([
@@ -324,7 +286,7 @@ export class AppStorageManager {
   /**
    * 清理和维护
    */
-  async cleanup(): Promise<void> {
+  async cleanup() {
     console.log('[存储管理器] 开始数据清理...');
     
     // 清理过期的历史记录
@@ -344,26 +306,26 @@ export class AppStorageManager {
   /**
    * 工具方法
    */
-  private getUserId(): string {
+  getUserId() {
     // 这里应该实现实际的用户ID获取逻辑
     return 'anonymous_user';
   }
 
-  private generateId(): string {
+  generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }
 }
 
 // 工厂函数
-export function createAppStorageManager(platform: 'web' | 'miniprogram'): AppStorageManager {
+export function createAppStorageManager(platform) {
   return new AppStorageManager(platform);
 }
 
 // 平台特定的实例创建
-export function createWebStorageManager(): AppStorageManager {
+export function createWebStorageManager() {
   return createAppStorageManager('web');
 }
 
-export function createMiniprogramStorageManager(): AppStorageManager {
+export function createMiniprogramStorageManager() {
   return createAppStorageManager('miniprogram');
 }

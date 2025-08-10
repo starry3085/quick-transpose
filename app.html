@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移调器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            600: '#059669'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for components */
+        .card {
+            @apply bg-white rounded-lg border border-gray-200 shadow-sm;
+        }
+        .card-header {
+            @apply px-6 py-4 border-b border-gray-200;
+        }
+        .card-content {
+            @apply px-6 py-4;
+        }
+        .card-title {
+            @apply text-lg font-semibold text-gray-900;
+        }
+        .btn {
+            @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
+        }
+        .btn-primary {
+            @apply bg-emerald-600 text-white hover:bg-emerald-700 h-10 py-2 px-4;
+        }
+        .btn-outline {
+            @apply border border-gray-300 bg-white hover:bg-gray-50 h-10 py-2 px-4;
+        }
+        .btn-ghost {
+            @apply hover:bg-gray-100 h-10 py-2 px-4;
+        }
+        .btn-sm {
+            @apply h-8 px-3 text-xs;
+        }
+        .input {
+            @apply flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent;
+        }
+        .select {
+            @apply flex h-10 w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent;
+        }
+        .badge {
+            @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+        }
+        .badge-secondary {
+            @apply bg-gray-100 text-gray-800;
+        }
+        .badge-outline {
+            @apply border border-gray-300 bg-white text-gray-700;
+        }
+        .switch {
+            @apply relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2;
+        }
+        .switch-thumb {
+            @apply pointer-events-none block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform;
+        }
+        .tab-active {
+            @apply bg-emerald-50 text-emerald-600;
+        }
+        .collapsible-content {
+            @apply overflow-hidden transition-all duration-300;
+        }
+        .collapsible-content.closed {
+            @apply max-h-0;
+        }
+        .collapsible-content.open {
+            @apply max-h-96;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-white">
+    <!-- 顶部栏 -->
+    <header class="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
+        <div class="flex items-center justify-between max-w-md mx-auto">
+            <h1 class="text-lg font-semibold text-gray-900">移调器</h1>
+            <button id="settings-btn" class="btn btn-ghost p-2">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="pb-20">
+        <!-- 转换器标签页 -->
+        <div id="transpose-tab" class="tab-content">
+            <div class="p-4 space-y-4 max-w-md mx-auto">
+                <!-- 输入卡片 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title text-base">和弦进行输入</h3>
+                    </div>
+                    <div class="card-content space-y-4">
+                        <div>
+                            <label for="progression" class="block text-sm font-medium text-gray-700 mb-1">和弦进行（数字）</label>
+                            <input
+                                id="progression"
+                                type="text"
+                                class="input"
+                                placeholder="例如：4 5 3 6 2 5 1"
+                            />
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">源调</label>
+                                <select id="source-key" class="select">
+                                    <option value="C">C</option>
+                                    <option value="C#">C#</option>
+                                    <option value="D">D</option>
+                                    <option value="D#">D#</option>
+                                    <option value="E">E</option>
+                                    <option value="F">F</option>
+                                    <option value="F#">F#</option>
+                                    <option value="G" selected>G</option>
+                                    <option value="G#">G#</option>
+                                    <option value="A">A</option>
+                                    <option value="A#">A#</option>
+                                    <option value="B">B</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">目标调</label>
+                                <select id="target-key" class="select">
+                                    <option value="C">C</option>
+                                    <option value="C#">C#</option>
+                                    <option value="D">D</option>
+                                    <option value="D#">D#</option>
+                                    <option value="E">E</option>
+                                    <option value="F">F</option>
+                                    <option value="F#">F#</option>
+                                    <option value="G" selected>G</option>
+                                    <option value="G#">G#</option>
+                                    <option value="A">A</option>
+                                    <option value="A#">A#</option>
+                                    <option value="B">B</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <button id="minor-switch" class="switch bg-gray-200" data-checked="false">
+                                    <span class="switch-thumb translate-x-0.5"></span>
+                                </button>
+                                <label for="minor-switch" class="text-sm font-medium text-gray-700">小调</label>
+                            </div>
+                            
+                            <div class="flex items-center space-x-2">
+                                <button id="seventh-switch" class="switch bg-gray-200" data-checked="false">
+                                    <span class="switch-thumb translate-x-0.5"></span>
+                                </button>
+                                <label for="seventh-switch" class="text-sm font-medium text-gray-700">七和弦</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快捷键区 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title text-base">常用走向</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="badge badge-outline cursor-pointer hover:bg-emerald-50" data-progression="4 5 3 6 2 5 1">4536251</span>
+                            <span class="badge badge-outline cursor-pointer hover:bg-emerald-50" data-progression="1 6 2 5">1625</span>
+                            <span class="badge badge-outline cursor-pointer hover:bg-emerald-50" data-progression="2 5 1">251</span>
+                            <span class="badge badge-outline cursor-pointer hover:bg-emerald-50" data-progression="6 4 1 5">6415</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 结果卡片 -->
+                <div id="result-card" class="card hidden">
+                    <div class="card-header">
+                        <div class="flex items-center justify-between">
+                            <h3 class="card-title text-base">转换结果</h3>
+                            <button id="copy-btn" class="btn btn-outline btn-sm">
+                                <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                                复制
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div id="result-chords" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+
+                <!-- 对照折叠 -->
+                <div id="comparison-section" class="hidden">
+                    <button id="comparison-toggle" class="btn btn-outline w-full">
+                        <svg class="h-4 w-4 mr-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                        原调→目标调对照
+                    </button>
+                    <div id="comparison-content" class="collapsible-content closed">
+                        <div class="card mt-2">
+                            <div class="card-content pt-4">
+                                <div id="comparison-list" class="space-y-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 字典标签页 -->
+        <div id="dictionary-tab" class="tab-content hidden">
+            <div class="p-4 space-y-4 max-w-md mx-auto">
+                <!-- 筛选卡片 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title text-base">调式选择</h3>
+                    </div>
+                    <div class="card-content space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">调</label>
+                                <select id="dict-key" class="select">
+                                    <option value="C" selected>C</option>
+                                    <option value="C#">C#</option>
+                                    <option value="D">D</option>
+                                    <option value="D#">D#</option>
+                                    <option value="E">E</option>
+                                    <option value="F">F</option>
+                                    <option value="F#">F#</option>
+                                    <option value="G">G</option>
+                                    <option value="G#">G#</option>
+                                    <option value="A">A</option>
+                                    <option value="A#">A#</option>
+                                    <option value="B">B</option>
+                                </select>
+                            </div>
+                            
+                            <div class="flex items-center space-x-2 pt-6">
+                                <button id="dict-minor-switch" class="switch bg-gray-200" data-checked="false">
+                                    <span class="switch-thumb translate-x-0.5"></span>
+                                </button>
+                                <label for="dict-minor-switch" class="text-sm font-medium text-gray-700">小调</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 度数表 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 id="chord-table-title" class="card-title text-base">C大调 和弦表</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="chord-list" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- 说明块 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title text-base">和弦标记说明</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="space-y-2 text-sm text-gray-600">
+                            <div class="flex justify-between">
+                                <span>大三和弦</span>
+                                <span>C, F, G</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>小三和弦</span>
+                                <span>Dm, Em, Am</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>减三和弦</span>
+                                <span>Bdim</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>七和弦</span>
+                                <span>C7, Dm7, G7</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快捷操作 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title text-base">快捷填入</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button class="btn btn-outline btn-sm" data-fill="1 4 5 1">I-IV-V-I</button>
+                            <button class="btn btn-outline btn-sm" data-fill="6 4 1 5">vi-IV-I-V</button>
+                            <button class="btn btn-outline btn-sm" data-fill="1 6 2 5">I-vi-ii-V</button>
+                            <button class="btn btn-outline btn-sm" data-fill="4 5 3 6 2 5 1">卡农进行</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部导航 -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+        <div class="max-w-md mx-auto">
+            <div class="grid grid-cols-2 h-16">
+                <button id="tab-transpose" class="tab-btn tab-active flex flex-col items-center justify-center gap-1">
+                    <span class="text-xs">转换器</span>
+                </button>
+                <button id="tab-dictionary" class="tab-btn flex flex-col items-center justify-center gap-1">
+                    <span class="text-xs">字典</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 设置面板 (模态框) -->
+    <div id="settings-modal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-black bg-opacity-50" id="settings-backdrop"></div>
+        <div class="fixed right-0 top-0 h-full w-80 bg-white shadow-lg transform translate-x-full transition-transform" id="settings-panel">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-semibold">设置</h2>
+                    <button id="close-settings" class="btn btn-ghost p-2">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div class="card">
+                        <div class="card-content">
+                            <h3 class="font-medium mb-2">主题设置</h3>
+                            <div class="flex items-center space-x-2">
+                                <button id="theme-switch" class="switch bg-gray-200" data-checked="false">
+                                    <span class="switch-thumb translate-x-0.5"></span>
+                                </button>
+                                <label class="text-sm">深色模式</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div id="toast" class="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-md shadow-lg transform translate-x-full transition-transform z-50">
+        <span id="toast-message">已复制到剪贴板</span>
+    </div>
+
+    <!-- 引入共享模块和应用逻辑 -->
+    <script type="module" src="./shared/index.js"></script>
+    <script type="module" src="./app.js"></script>
+</body>
+</html>
