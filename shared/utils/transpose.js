@@ -2,14 +2,7 @@
  * 和弦移调核心算法
  */
 
-import { CHORD_MAPS, ROMAN_NUMERALS } from '../constants/chord-data';
-import type { 
-  TransposeParams, 
-  TransposeResult, 
-  ChordData, 
-  KeyType, 
-  ChordType 
-} from '../types/chord';
+import { CHORD_MAPS, ROMAN_NUMERALS } from '../constants/chord-data.js';
 
 /**
  * 移调核心函数
@@ -17,10 +10,15 @@ import type {
 export class TransposeEngine {
   /**
    * 执行和弦移调
-   * @param params 移调参数
-   * @returns 移调结果
+   * @param {Object} params 移调参数
+   * @param {string} params.progression 和弦进行
+   * @param {string} params.sourceKey 源调
+   * @param {string} params.targetKey 目标调
+   * @param {boolean} params.isMinor 是否为小调
+   * @param {boolean} params.useSeventhChords 是否使用七和弦
+   * @returns {Object} 移调结果
    */
-  static transpose(params: TransposeParams): TransposeResult {
+  static transpose(params) {
     const { progression, sourceKey, targetKey, isMinor, useSeventhChords = false } = params;
 
     // 输入验证
@@ -103,19 +101,19 @@ export class TransposeEngine {
 
   /**
    * 获取罗马数字标记
-   * @param isMinor 是否为小调
-   * @returns 罗马数字列表
+   * @param {boolean} isMinor 是否为小调
+   * @returns {string[]} 罗马数字列表
    */
-  static getRomanNumerals(isMinor: boolean = false): string[] {
+  static getRomanNumerals(isMinor = false) {
     return [...ROMAN_NUMERALS[isMinor ? 'minor' : 'major']];
   }
 
   /**
    * 获取和弦的详细信息
-   * @param chordName 和弦名称
-   * @returns 和弦信息
+   * @param {string} chordName 和弦名称
+   * @returns {Object} 和弦信息
    */
-  static getChordInfo(chordName: string) {
+  static getChordInfo(chordName) {
     // 解析和弦名称，提取根音、品质等信息
     const root = chordName.replace(/[^A-G#b]/g, '');
     const quality = chordName.replace(/^[A-G#b]+/, '');
@@ -130,10 +128,10 @@ export class TransposeEngine {
 
   /**
    * 判断和弦类型
-   * @param quality 和弦品质标记
-   * @returns 和弦类型
+   * @param {string} quality 和弦品质标记
+   * @returns {string} 和弦类型
    */
-  private static getChordType(quality: string): string {
+  static getChordType(quality) {
     if (!quality || quality === '') return 'major';
     if (quality === 'm') return 'minor';
     if (quality === 'dim') return 'diminished';
@@ -145,18 +143,18 @@ export class TransposeEngine {
 
   /**
    * 批量移调多个进行
-   * @param progressions 多个和弦进行
-   * @param sourceKey 源调
-   * @param targetKey 目标调
-   * @param isMinor 是否为小调
-   * @returns 移调结果数组
+   * @param {string[]} progressions 多个和弦进行
+   * @param {string} sourceKey 源调
+   * @param {string} targetKey 目标调
+   * @param {boolean} isMinor 是否为小调
+   * @returns {Object[]} 移调结果数组
    */
   static batchTranspose(
-    progressions: string[], 
-    sourceKey: KeyType, 
-    targetKey: KeyType, 
-    isMinor: boolean = false
-  ): TransposeResult[] {
+    progressions, 
+    sourceKey, 
+    targetKey, 
+    isMinor = false
+  ) {
     return progressions.map(progression => 
       this.transpose({ progression, sourceKey, targetKey, isMinor })
     );

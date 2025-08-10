@@ -3,53 +3,22 @@
  * 处理跨平台数据同步和冲突解决
  */
 
-import { CrossPlatformStorage, STORAGE_KEYS } from '../storage/CrossPlatformStorage';
-
-export interface SyncData {
-  key: string;
-  data: any;
-  timestamp: number;
-  platform: 'web' | 'miniprogram';
-  version: number;
-  hash: string;
-}
-
-export interface SyncConflict {
-  key: string;
-  localData: SyncData;
-  remoteData: SyncData;
-  conflictType: 'version' | 'timestamp' | 'content';
-}
-
-export interface SyncResult {
-  success: boolean;
-  synced: string[];
-  conflicts: SyncConflict[];
-  errors: Array<{ key: string; error: string }>;
-  timestamp: number;
-}
+import { STORAGE_KEYS } from '../storage/CrossPlatformStorage.js';
 
 export class DataSyncService {
-  private storage: CrossPlatformStorage;
-  private syncEndpoint?: string;
-  private userId?: string;
-
-  constructor(storage: CrossPlatformStorage, options?: {
-    syncEndpoint?: string;
-    userId?: string;
-  }) {
+  constructor(storage, options = {}) {
     this.storage = storage;
-    this.syncEndpoint = options?.syncEndpoint;
-    this.userId = options?.userId;
+    this.syncEndpoint = options.syncEndpoint;
+    this.userId = options.userId;
   }
 
   /**
    * 执行完整数据同步
    */
-  async performFullSync(): Promise<SyncResult> {
+  async performFullSync() {
     console.log('[同步服务] 开始完整数据同步...');
     
-    const result: SyncResult = {
+    const result = {
       success: false,
       synced: [],
       conflicts: [],
@@ -114,10 +83,10 @@ export class DataSyncService {
   /**
    * 增量数据同步
    */
-  async performIncrementalSync(lastSyncTime: number): Promise<SyncResult> {
+  async performIncrementalSync(lastSyncTime) {
     console.log(`[同步服务] 开始增量同步，上次同步时间: ${new Date(lastSyncTime).toLocaleString()}`);
     
-    const result: SyncResult = {
+    const result = {
       success: false,
       synced: [],
       conflicts: [],
@@ -179,9 +148,9 @@ export class DataSyncService {
   /**
    * 获取所有本地数据
    */
-  private async getAllLocalData(): Promise<SyncData[]> {
+  async getAllLocalData() {
     const keys = Object.values(STORAGE_KEYS);
-    const syncData: SyncData[] = [];
+    const syncData = [];
     
     for (const key of keys) {
       try {
@@ -207,7 +176,7 @@ export class DataSyncService {
   /**
    * 获取所有远程数据（模拟实现）
    */
-  private async getAllRemoteData(): Promise<SyncData[]> {
+  async getAllRemoteData() {
     // 这里应该实现实际的远程数据获取逻辑
     // 目前返回空数组作为模拟
     console.log('[同步服务] 获取远程数据（模拟）');
@@ -217,7 +186,7 @@ export class DataSyncService {
   /**
    * 获取本地更改
    */
-  private async getLocalChanges(since: number): Promise<SyncData[]> {
+  async getLocalChanges(since) {
     // 实际实现中，这里应该跟踪数据的修改时间
     // 目前简化为获取所有数据
     return this.getAllLocalData();
@@ -226,7 +195,7 @@ export class DataSyncService {
   /**
    * 获取远程更改（模拟实现）
    */
-  private async getRemoteChanges(since: number): Promise<SyncData[]> {
+  async getRemoteChanges(since) {
     // 模拟远程更改
     console.log(`[同步服务] 获取远程更改，时间戳: ${since}`);
     return [];
@@ -235,14 +204,10 @@ export class DataSyncService {
   /**
    * 比较数据并确定同步操作
    */
-  private compareData(localData: SyncData[], remoteData: SyncData[]): {
-    toUpload: SyncData[];
-    toDownload: SyncData[];
-    conflicts: SyncConflict[];
-  } {
-    const toUpload: SyncData[] = [];
-    const toDownload: SyncData[] = [];
-    const conflicts: SyncConflict[] = [];
+  compareData(localData, remoteData) {
+    const toUpload = [];
+    const toDownload = [];
+    const conflicts = [];
     
     const remoteMap = new Map(remoteData.map(item => [item.key, item]));
     const localMap = new Map(localData.map(item => [item.key, item]));
@@ -285,11 +250,7 @@ export class DataSyncService {
   /**
    * 比较更改
    */
-  private compareChanges(localChanges: SyncData[], remoteChanges: SyncData[]): {
-    toUpload: SyncData[];
-    toDownload: SyncData[];
-    conflicts: SyncConflict[];
-  } {
+  compareChanges(localChanges, remoteChanges) {
     // 简化实现，使用相同的比较逻辑
     return this.compareData(localChanges, remoteChanges);
   }
@@ -297,8 +258,8 @@ export class DataSyncService {
   /**
    * 解决冲突
    */
-  private async resolveConflicts(conflicts: SyncConflict[]): Promise<Array<SyncConflict & { resolved: boolean }>> {
-    const resolvedConflicts: Array<SyncConflict & { resolved: boolean }> = [];
+  async resolveConflicts(conflicts) {
+    const resolvedConflicts = [];
     
     for (const conflict of conflicts) {
       try {
@@ -324,7 +285,7 @@ export class DataSyncService {
   /**
    * 上传数据（模拟实现）
    */
-  private async uploadData(data: SyncData): Promise<void> {
+  async uploadData(data) {
     // 这里应该实现实际的数据上传逻辑
     console.log(`[同步服务] 上传数据: ${data.key} (模拟)`);
     
@@ -347,7 +308,7 @@ export class DataSyncService {
   /**
    * 生成数据哈希
    */
-  private generateHash(data: any): string {
+  generateHash(data) {
     const str = JSON.stringify(data);
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -361,12 +322,7 @@ export class DataSyncService {
   /**
    * 获取同步状态
    */
-  async getSyncStatus(): Promise<{
-    lastSync: number | null;
-    pendingUploads: number;
-    pendingDownloads: number;
-    conflicts: number;
-  }> {
+  async getSyncStatus() {
     // 这里应该实现实际的状态获取逻辑
     return {
       lastSync: Date.now() - 3600000, // 1小时前
@@ -378,12 +334,6 @@ export class DataSyncService {
 }
 
 // 工厂函数
-export function createDataSyncService(
-  storage: CrossPlatformStorage,
-  options?: {
-    syncEndpoint?: string;
-    userId?: string;
-  }
-): DataSyncService {
+export function createDataSyncService(storage, options) {
   return new DataSyncService(storage, options);
 }

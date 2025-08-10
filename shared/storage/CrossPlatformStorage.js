@@ -3,65 +3,9 @@
  * 支持Web端localStorage和小程序端wx.storage
  */
 
-// WeChat miniprogram global types
-declare global {
-  const wx: {
-    getStorageSync: (key: string) => any;
-    setStorageSync: (key: string, data: any) => void;
-    removeStorageSync: (key: string) => void;
-    getStorage: (options: {
-      key: string;
-      success: (res: { data: any }) => void;
-      fail: (error: any) => void;
-    }) => void;
-    setStorage: (options: {
-      key: string;
-      data: any;
-      success: () => void;
-      fail: (error: any) => void;
-    }) => void;
-    removeStorage: (options: {
-      key: string;
-      success: () => void;
-      fail: (error: any) => void;
-    }) => void;
-    clearStorage: (options: {
-      success: () => void;
-      fail: (error: any) => void;
-    }) => void;
-    getStorageInfo: (options: {
-      success: (res: { keys: string[] }) => void;
-      fail: () => void;
-    }) => void;
-  };
-}
-
-export interface StorageAdapter {
-  getItem(key: string): Promise<string | null>;
-  setItem(key: string, value: string): Promise<void>;
-  removeItem(key: string): Promise<void>;
-  clear(): Promise<void>;
-  getAllKeys(): Promise<string[]>;
-}
-
-export interface SyncOptions {
-  enableSync: boolean;
-  syncInterval: number; // 同步间隔（毫秒）
-  maxRetries: number;
-  conflictResolution: 'local' | 'remote' | 'merge' | 'timestamp';
-}
-
-export interface StorageItem<T = any> {
-  data: T;
-  timestamp: number;
-  version: number;
-  platform: 'web' | 'miniprogram';
-  checksum?: string;
-}
-
 // Web端存储适配器
-export class WebStorageAdapter implements StorageAdapter {
-  async getItem(key: string): Promise<string | null> {
+export class WebStorageAdapter {
+  async getItem(key) {
     try {
       return localStorage.getItem(key);
     } catch (error) {
@@ -70,7 +14,7 @@ export class WebStorageAdapter implements StorageAdapter {
     }
   }
 
-  async setItem(key: string, value: string): Promise<void> {
+  async setItem(key, value) {
     try {
       localStorage.setItem(key, value);
     } catch (error) {
@@ -79,7 +23,7 @@ export class WebStorageAdapter implements StorageAdapter {
     }
   }
 
-  async removeItem(key: string): Promise<void> {
+  async removeItem(key) {
     try {
       localStorage.removeItem(key);
     } catch (error) {
@@ -88,7 +32,7 @@ export class WebStorageAdapter implements StorageAdapter {
     }
   }
 
-  async clear(): Promise<void> {
+  async clear() {
     try {
       localStorage.clear();
     } catch (error) {
@@ -97,7 +41,7 @@ export class WebStorageAdapter implements StorageAdapter {
     }
   }
 
-  async getAllKeys(): Promise<string[]> {
+  async getAllKeys() {
     try {
       return Object.keys(localStorage);
     } catch (error) {
@@ -108,14 +52,14 @@ export class WebStorageAdapter implements StorageAdapter {
 }
 
 // 小程序端存储适配器
-export class MiniprogramStorageAdapter implements StorageAdapter {
-  async getItem(key: string): Promise<string | null> {
+export class MiniprogramStorageAdapter {
+  async getItem(key) {
     return new Promise((resolve) => {
       try {
         if (typeof wx !== 'undefined') {
           wx.getStorage({
             key,
-            success: (res: { data: any }) => resolve(res.data),
+            success: (res) => resolve(res.data),
             fail: () => resolve(null)
           });
         } else {
@@ -128,7 +72,7 @@ export class MiniprogramStorageAdapter implements StorageAdapter {
     });
   }
 
-  async setItem(key: string, value: string): Promise<void> {
+  async setItem(key, value) {
     return new Promise((resolve, reject) => {
       try {
         if (typeof wx !== 'undefined') {
@@ -136,7 +80,7 @@ export class MiniprogramStorageAdapter implements StorageAdapter {
             key,
             data: value,
             success: () => resolve(),
-            fail: (error: any) => reject(error)
+            fail: (error) => reject(error)
           });
         } else {
           reject(new Error('微信环境不可用'));
@@ -148,14 +92,14 @@ export class MiniprogramStorageAdapter implements StorageAdapter {
     });
   }
 
-  async removeItem(key: string): Promise<void> {
+  async removeItem(key) {
     return new Promise((resolve, reject) => {
       try {
         if (typeof wx !== 'undefined') {
           wx.removeStorage({
             key,
             success: () => resolve(),
-            fail: (error: any) => reject(error)
+            fail: (error) => reject(error)
           });
         } else {
           reject(new Error('微信环境不可用'));
@@ -167,13 +111,13 @@ export class MiniprogramStorageAdapter implements StorageAdapter {
     });
   }
 
-  async clear(): Promise<void> {
+  async clear() {
     return new Promise((resolve, reject) => {
       try {
         if (typeof wx !== 'undefined') {
           wx.clearStorage({
             success: () => resolve(),
-            fail: (error: any) => reject(error)
+            fail: (error) => reject(error)
           });
         } else {
           reject(new Error('微信环境不可用'));
@@ -185,12 +129,12 @@ export class MiniprogramStorageAdapter implements StorageAdapter {
     });
   }
 
-  async getAllKeys(): Promise<string[]> {
+  async getAllKeys() {
     return new Promise((resolve) => {
       try {
         if (typeof wx !== 'undefined') {
           wx.getStorageInfo({
-            success: (res: { keys: string[] }) => resolve(res.keys),
+            success: (res) => resolve(res.keys),
             fail: () => resolve([])
           });
         } else {
@@ -206,12 +150,7 @@ export class MiniprogramStorageAdapter implements StorageAdapter {
 
 // 跨平台存储管理器
 export class CrossPlatformStorage {
-  private adapter: StorageAdapter;
-  private platform: 'web' | 'miniprogram';
-  private syncOptions: SyncOptions;
-  private syncTimer?: NodeJS.Timeout;
-
-  constructor(platform: 'web' | 'miniprogram', syncOptions?: Partial<SyncOptions>) {
+  constructor(platform, syncOptions = {}) {
     this.platform = platform;
     this.adapter = platform === 'web' 
       ? new WebStorageAdapter() 
@@ -233,8 +172,8 @@ export class CrossPlatformStorage {
   /**
    * 存储数据
    */
-  async setItem<T>(key: string, data: T): Promise<void> {
-    const storageItem: StorageItem<T> = {
+  async setItem(key, data) {
+    const storageItem = {
       data,
       timestamp: Date.now(),
       version: 1,
@@ -251,14 +190,14 @@ export class CrossPlatformStorage {
   /**
    * 读取数据
    */
-  async getItem<T>(key: string): Promise<T | null> {
+  async getItem(key) {
     try {
       const serializedData = await this.adapter.getItem(key);
       if (!serializedData) {
         return null;
       }
 
-      const storageItem: StorageItem<T> = JSON.parse(serializedData);
+      const storageItem = JSON.parse(serializedData);
       
       // 验证数据完整性
       if (this.validateChecksum(storageItem.data, storageItem.checksum)) {
@@ -277,7 +216,7 @@ export class CrossPlatformStorage {
   /**
    * 删除数据
    */
-  async removeItem(key: string): Promise<void> {
+  async removeItem(key) {
     await this.adapter.removeItem(key);
     console.log(`[存储] 已删除数据: ${key} (${this.platform})`);
   }
@@ -285,7 +224,7 @@ export class CrossPlatformStorage {
   /**
    * 清空所有数据
    */
-  async clear(): Promise<void> {
+  async clear() {
     await this.adapter.clear();
     console.log(`[存储] 已清空所有数据 (${this.platform})`);
   }
@@ -293,14 +232,14 @@ export class CrossPlatformStorage {
   /**
    * 获取所有键
    */
-  async getAllKeys(): Promise<string[]> {
+  async getAllKeys() {
     return await this.adapter.getAllKeys();
   }
 
   /**
    * 批量操作
    */
-  async batchSet<T>(items: Record<string, T>): Promise<void> {
+  async batchSet(items) {
     const promises = Object.entries(items).map(([key, value]) => 
       this.setItem(key, value)
     );
@@ -308,14 +247,14 @@ export class CrossPlatformStorage {
     console.log(`[存储] 批量保存完成: ${Object.keys(items).length} 项`);
   }
 
-  async batchGet<T>(keys: string[]): Promise<Record<string, T | null>> {
+  async batchGet(keys) {
     const promises = keys.map(async (key) => ({
       key,
-      value: await this.getItem<T>(key)
+      value: await this.getItem(key)
     }));
     
     const results = await Promise.all(promises);
-    const batchResult: Record<string, T | null> = {};
+    const batchResult = {};
     
     results.forEach(({ key, value }) => {
       batchResult[key] = value;
@@ -328,7 +267,7 @@ export class CrossPlatformStorage {
   /**
    * 数据同步功能
    */
-  private startSync(): void {
+  startSync() {
     if (this.syncTimer) {
       clearInterval(this.syncTimer);
     }
@@ -342,7 +281,7 @@ export class CrossPlatformStorage {
     console.log(`[同步] 数据同步已启动，间隔: ${this.syncOptions.syncInterval}ms`);
   }
 
-  private async performSync(): Promise<void> {
+  async performSync() {
     // 这里可以实现与服务器的数据同步逻辑
     console.log('[同步] 执行数据同步...');
     
@@ -360,7 +299,7 @@ export class CrossPlatformStorage {
   /**
    * 停止同步
    */
-  stopSync(): void {
+  stopSync() {
     if (this.syncTimer) {
       clearInterval(this.syncTimer);
       this.syncTimer = undefined;
@@ -371,7 +310,7 @@ export class CrossPlatformStorage {
   /**
    * 生成数据校验和
    */
-  private generateChecksum<T>(data: T): string {
+  generateChecksum(data) {
     const str = JSON.stringify(data);
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -385,7 +324,7 @@ export class CrossPlatformStorage {
   /**
    * 验证数据校验和
    */
-  private validateChecksum<T>(data: T, checksum?: string): boolean {
+  validateChecksum(data, checksum) {
     if (!checksum) return true; // 如果没有校验和，认为有效
     return this.generateChecksum(data) === checksum;
   }
@@ -393,12 +332,7 @@ export class CrossPlatformStorage {
   /**
    * 获取存储统计信息
    */
-  async getStorageStats(): Promise<{
-    totalKeys: number;
-    totalSize: number;
-    platform: string;
-    lastSync?: number;
-  }> {
+  async getStorageStats() {
     const keys = await this.getAllKeys();
     let totalSize = 0;
     
@@ -419,10 +353,7 @@ export class CrossPlatformStorage {
 }
 
 // 工厂函数
-export function createCrossPlatformStorage(
-  platform: 'web' | 'miniprogram',
-  syncOptions?: Partial<SyncOptions>
-): CrossPlatformStorage {
+export function createCrossPlatformStorage(platform, syncOptions) {
   return new CrossPlatformStorage(platform, syncOptions);
 }
 
@@ -434,4 +365,4 @@ export const STORAGE_KEYS = {
   APP_STATE: 'app_state',
   CHORD_PROGRESSIONS: 'chord_progressions',
   RECENT_SEARCHES: 'recent_searches'
-} as const;
+};

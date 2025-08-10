@@ -3,50 +3,10 @@
  * Defines the global state structure for the chord transposition app
  */
 
-import { createStateManager, StateManager } from './StateManager';
-
-// Application state interface
-export interface AppState {
-  // Transpose functionality state
-  transpose: {
-    currentChord: string;
-    targetKey: number;
-    transposedChord: string;
-    history: Array<{
-      original: string;
-      transposed: string;
-      key: number;
-      timestamp: number;
-    }>;
-  };
-  
-  // Dictionary functionality state
-  dictionary: {
-    selectedChord: string | null;
-    searchQuery: string;
-    filteredChords: string[];
-    favorites: string[];
-  };
-  
-  // UI state
-  ui: {
-    activeTab: 'transpose' | 'dictionary';
-    isLoading: boolean;
-    deviceType: 'mobile' | 'tablet' | 'desktop';
-    theme: 'light' | 'dark';
-  };
-  
-  // User preferences
-  preferences: {
-    defaultKey: number;
-    showHistory: boolean;
-    maxHistoryItems: number;
-    autoSave: boolean;
-  };
-}
+import { createStateManager } from './StateManager.js';
 
 // Initial state
-const initialAppState: AppState = {
+const initialAppState = {
   transpose: {
     currentChord: '',
     targetKey: 0,
@@ -74,7 +34,7 @@ const initialAppState: AppState = {
 };
 
 // Create platform-specific state managers
-export function createWebStateManager(): StateManager<AppState> {
+export function createWebStateManager() {
   return createStateManager(initialAppState, {
     platform: 'web',
     enablePersistence: true,
@@ -82,7 +42,7 @@ export function createWebStateManager(): StateManager<AppState> {
   });
 }
 
-export function createMiniprogramStateManager(): StateManager<AppState> {
+export function createMiniprogramStateManager() {
   return createStateManager(initialAppState, {
     platform: 'miniprogram',
     enablePersistence: true,
@@ -92,10 +52,12 @@ export function createMiniprogramStateManager(): StateManager<AppState> {
 
 // State action creators for common operations
 export class AppStateActions {
-  constructor(private stateManager: StateManager<AppState>) {}
+  constructor(stateManager) {
+    this.stateManager = stateManager;
+  }
 
   // Transpose actions
-  setCurrentChord(chord: string) {
+  setCurrentChord(chord) {
     this.stateManager.setState({
       transpose: {
         ...this.stateManager.getStateProperty('transpose'),
@@ -104,7 +66,7 @@ export class AppStateActions {
     });
   }
 
-  setTargetKey(key: number) {
+  setTargetKey(key) {
     this.stateManager.setState({
       transpose: {
         ...this.stateManager.getStateProperty('transpose'),
@@ -113,7 +75,7 @@ export class AppStateActions {
     });
   }
 
-  setTransposedChord(chord: string) {
+  setTransposedChord(chord) {
     const transposeState = this.stateManager.getStateProperty('transpose');
     this.stateManager.setState({
       transpose: {
@@ -123,7 +85,7 @@ export class AppStateActions {
     });
   }
 
-  addToHistory(original: string, transposed: string, key: number) {
+  addToHistory(original, transposed, key) {
     const transposeState = this.stateManager.getStateProperty('transpose');
     const preferences = this.stateManager.getStateProperty('preferences');
     
@@ -160,7 +122,7 @@ export class AppStateActions {
   }
 
   // Dictionary actions
-  setSelectedChord(chord: string | null) {
+  setSelectedChord(chord) {
     this.stateManager.setState({
       dictionary: {
         ...this.stateManager.getStateProperty('dictionary'),
@@ -169,7 +131,7 @@ export class AppStateActions {
     });
   }
 
-  setSearchQuery(query: string) {
+  setSearchQuery(query) {
     this.stateManager.setState({
       dictionary: {
         ...this.stateManager.getStateProperty('dictionary'),
@@ -178,7 +140,7 @@ export class AppStateActions {
     });
   }
 
-  setFilteredChords(chords: string[]) {
+  setFilteredChords(chords) {
     this.stateManager.setState({
       dictionary: {
         ...this.stateManager.getStateProperty('dictionary'),
@@ -187,7 +149,7 @@ export class AppStateActions {
     });
   }
 
-  toggleFavorite(chord: string) {
+  toggleFavorite(chord) {
     const dictionaryState = this.stateManager.getStateProperty('dictionary');
     const favorites = dictionaryState.favorites;
     
@@ -204,7 +166,7 @@ export class AppStateActions {
   }
 
   // UI actions
-  setActiveTab(tab: 'transpose' | 'dictionary') {
+  setActiveTab(tab) {
     this.stateManager.setState({
       ui: {
         ...this.stateManager.getStateProperty('ui'),
@@ -213,7 +175,7 @@ export class AppStateActions {
     });
   }
 
-  setLoading(isLoading: boolean) {
+  setLoading(isLoading) {
     this.stateManager.setState({
       ui: {
         ...this.stateManager.getStateProperty('ui'),
@@ -222,7 +184,7 @@ export class AppStateActions {
     });
   }
 
-  setDeviceType(deviceType: 'mobile' | 'tablet' | 'desktop') {
+  setDeviceType(deviceType) {
     this.stateManager.setState({
       ui: {
         ...this.stateManager.getStateProperty('ui'),
@@ -231,7 +193,7 @@ export class AppStateActions {
     });
   }
 
-  setTheme(theme: 'light' | 'dark') {
+  setTheme(theme) {
     this.stateManager.setState({
       ui: {
         ...this.stateManager.getStateProperty('ui'),
@@ -241,7 +203,7 @@ export class AppStateActions {
   }
 
   // Preferences actions
-  updatePreferences(preferences: Partial<AppState['preferences']>) {
+  updatePreferences(preferences) {
     this.stateManager.setState({
       preferences: {
         ...this.stateManager.getStateProperty('preferences'),
@@ -255,27 +217,27 @@ export class AppStateActions {
     return this.stateManager.getState();
   }
 
-  subscribe<K extends keyof AppState>(key: K, listener: (newValue: AppState[K], oldValue: AppState[K]) => void) {
+  subscribe(key, listener) {
     return this.stateManager.subscribe(key, listener);
   }
 
-  subscribeGlobal(listener: (newState: AppState, oldState: AppState) => void) {
+  subscribeGlobal(listener) {
     return this.stateManager.subscribeGlobal(listener);
   }
 }
 
 // Export singleton instances (to be initialized by each platform)
-let webStateManager: StateManager<AppState> | null = null;
-let miniprogramStateManager: StateManager<AppState> | null = null;
+let webStateManager = null;
+let miniprogramStateManager = null;
 
-export function getWebStateManager(): StateManager<AppState> {
+export function getWebStateManager() {
   if (!webStateManager) {
     webStateManager = createWebStateManager();
   }
   return webStateManager;
 }
 
-export function getMiniprogramStateManager(): StateManager<AppState> {
+export function getMiniprogramStateManager() {
   if (!miniprogramStateManager) {
     miniprogramStateManager = createMiniprogramStateManager();
   }
@@ -283,10 +245,10 @@ export function getMiniprogramStateManager(): StateManager<AppState> {
 }
 
 // Create action creators for each platform
-export function createWebAppActions(): AppStateActions {
+export function createWebAppActions() {
   return new AppStateActions(getWebStateManager());
 }
 
-export function createMiniprogramAppActions(): AppStateActions {
+export function createMiniprogramAppActions() {
   return new AppStateActions(getMiniprogramStateManager());
 }

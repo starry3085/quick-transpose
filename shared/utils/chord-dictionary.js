@@ -2,26 +2,15 @@
  * 和弦字典工具函数
  */
 
-import type { KeyType } from '../types/chord';
-import { CHORD_MAPS, ROMAN_NUMERALS, DEGREE_NAMES, ALL_KEYS } from '../constants/chord-data';
-
-export interface ChordInfo {
-  chord: string;
-  degree: number;
-  romanNumeral: string;
-  degreeName: string;
-}
-
-export interface ChordDictionaryData {
-  key: KeyType;
-  isMinor: boolean;
-  chords: ChordInfo[];
-}
+import { CHORD_MAPS, ROMAN_NUMERALS, DEGREE_NAMES, ALL_KEYS } from '../constants/chord-data.js';
 
 /**
  * 获取指定调性的和弦字典数据
+ * @param {string} key 调性
+ * @param {boolean} isMinor 是否为小调
+ * @returns {Object} 和弦字典数据
  */
-export function getChordDictionary(key: KeyType, isMinor: boolean = false): ChordDictionaryData {
+export function getChordDictionary(key, isMinor = false) {
   const chordType = isMinor ? 'minor' : 'major';
   const chords = CHORD_MAPS[chordType][key] || [];
   const romanNumerals = ROMAN_NUMERALS[chordType];
@@ -74,8 +63,12 @@ export function searchChords(query: string, key?: KeyType, isMinor?: boolean): C
 
 /**
  * 根据级数获取和弦
+ * @param {string} key 调性
+ * @param {number} degree 级数
+ * @param {boolean} isMinor 是否为小调
+ * @returns {string|null} 和弦名称
  */
-export function getChordByDegree(key: KeyType, degree: number, isMinor: boolean = false): string | null {
+export function getChordByDegree(key, degree, isMinor = false) {
   const chordType = isMinor ? 'minor' : 'major';
   const chords = CHORD_MAPS[chordType][key];
   
@@ -88,23 +81,32 @@ export function getChordByDegree(key: KeyType, degree: number, isMinor: boolean 
 
 /**
  * 获取和弦的级数信息
+ * @param {string} chord 和弦名称
+ * @param {string} key 调性
+ * @param {boolean} isMinor 是否为小调
+ * @returns {Object|null} 和弦级数信息
  */
-export function getChordDegreeInfo(chord: string, key: KeyType, isMinor: boolean = false): ChordInfo | null {
+export function getChordDegreeInfo(chord, key, isMinor = false) {
   const dictionary = getChordDictionary(key, isMinor);
   return dictionary.chords.find(c => c.chord === chord) || null;
 }
 
 /**
  * 验证调性是否有效
+ * @param {string} key 调性
+ * @returns {boolean} 是否有效
  */
-export function isValidKey(key: string): key is KeyType {
-  return ALL_KEYS.includes(key as KeyType);
+export function isValidKey(key) {
+  return ALL_KEYS.includes(key);
 }
 
 /**
  * 获取相对大小调
+ * @param {string} key 调性
+ * @param {boolean} isMinor 是否为小调
+ * @returns {Object} 相对调性信息
  */
-export function getRelativeKey(key: KeyType, isMinor: boolean): { key: KeyType; isMinor: boolean } {
+export function getRelativeKey(key, isMinor) {
   if (isMinor) {
     // 小调转大调：向上小三度
     const minorIndex = ALL_KEYS.indexOf(key);

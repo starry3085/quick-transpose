@@ -2,13 +2,17 @@
  * 跨平台存储抽象层
  */
 
-import type { StorageAdapter, TransposeSettings } from '../types/chord';
-
 /**
  * Web平台存储适配器
  */
-export class WebStorageAdapter implements StorageAdapter {
-  get<T>(key: string, defaultValue?: T): T | null {
+export class WebStorageAdapter {
+  /**
+   * 获取存储值
+   * @param {string} key 键名
+   * @param {any} defaultValue 默认值
+   * @returns {any} 存储值
+   */
+  get(key, defaultValue) {
     try {
       const item = localStorage.getItem(key);
       if (item === null) {
@@ -21,7 +25,12 @@ export class WebStorageAdapter implements StorageAdapter {
     }
   }
 
-  set<T>(key: string, value: T): void {
+  /**
+   * 设置存储值
+   * @param {string} key 键名
+   * @param {any} value 值
+   */
+  set(key, value) {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
@@ -29,7 +38,11 @@ export class WebStorageAdapter implements StorageAdapter {
     }
   }
 
-  remove(key: string): void {
+  /**
+   * 删除存储值
+   * @param {string} key 键名
+   */
+  remove(key) {
     try {
       localStorage.removeItem(key);
     } catch (error) {
@@ -37,7 +50,10 @@ export class WebStorageAdapter implements StorageAdapter {
     }
   }
 
-  clear(): void {
+  /**
+   * 清空存储
+   */
+  clear() {
     try {
       localStorage.clear();
     } catch (error) {
@@ -49,11 +65,16 @@ export class WebStorageAdapter implements StorageAdapter {
 /**
  * 小程序存储适配器
  */
-export class MiniprogramStorageAdapter implements StorageAdapter {
-  get<T>(key: string, defaultValue?: T): T | null {
+export class MiniprogramStorageAdapter {
+  /**
+   * 获取存储值
+   * @param {string} key 键名
+   * @param {any} defaultValue 默认值
+   * @returns {any} 存储值
+   */
+  get(key, defaultValue) {
     try {
-      // @ts-ignore - wx is available in miniprogram environment
-      const value = (globalThis as any).wx?.getStorageSync(key);
+      const value = globalThis.wx?.getStorageSync(key);
       return value || defaultValue || null;
     } catch (error) {
       console.error('Miniprogram storage get error:', error);
@@ -61,28 +82,37 @@ export class MiniprogramStorageAdapter implements StorageAdapter {
     }
   }
 
-  set<T>(key: string, value: T): void {
+  /**
+   * 设置存储值
+   * @param {string} key 键名
+   * @param {any} value 值
+   */
+  set(key, value) {
     try {
-      // @ts-ignore - wx is available in miniprogram environment
-      (globalThis as any).wx?.setStorageSync(key, value);
+      globalThis.wx?.setStorageSync(key, value);
     } catch (error) {
       console.error('Miniprogram storage set error:', error);
     }
   }
 
-  remove(key: string): void {
+  /**
+   * 删除存储值
+   * @param {string} key 键名
+   */
+  remove(key) {
     try {
-      // @ts-ignore - wx is available in miniprogram environment
-      (globalThis as any).wx?.removeStorageSync(key);
+      globalThis.wx?.removeStorageSync(key);
     } catch (error) {
       console.error('Miniprogram storage remove error:', error);
     }
   }
 
-  clear(): void {
+  /**
+   * 清空存储
+   */
+  clear() {
     try {
-      // @ts-ignore - wx is available in miniprogram environment
-      (globalThis as any).wx?.clearStorageSync();
+      globalThis.wx?.clearStorageSync();
     } catch (error) {
       console.error('Miniprogram storage clear error:', error);
     }
@@ -93,23 +123,27 @@ export class MiniprogramStorageAdapter implements StorageAdapter {
  * 存储管理器
  */
 export class StorageManager {
-  private adapter: StorageAdapter;
-
-  constructor(adapter: StorageAdapter) {
+  /**
+   * 构造函数
+   * @param {Object} adapter 存储适配器
+   */
+  constructor(adapter) {
     this.adapter = adapter;
   }
 
   /**
    * 保存移调设置
+   * @param {Object} settings 设置对象
    */
-  saveTransposeSettings(settings: TransposeSettings): void {
+  saveTransposeSettings(settings) {
     this.adapter.set('transpose_settings', settings);
   }
 
   /**
    * 获取移调设置
+   * @returns {Object|null} 设置对象
    */
-  getTransposeSettings(): TransposeSettings | null {
+  getTransposeSettings() {
     return this.adapter.get('transpose_settings', {
       sourceKey: 'C',
       targetKey: 'G',
@@ -120,8 +154,9 @@ export class StorageManager {
 
   /**
    * 保存最近使用的进行
+   * @param {string[]} progressions 进行数组
    */
-  saveRecentProgressions(progressions: string[]): void {
+  saveRecentProgressions(progressions) {
     // 限制最多保存10个
     const limited = progressions.slice(0, 10);
     this.adapter.set('recent_progressions', limited);
@@ -129,15 +164,17 @@ export class StorageManager {
 
   /**
    * 获取最近使用的进行
+   * @returns {string[]} 进行数组
    */
-  getRecentProgressions(): string[] {
+  getRecentProgressions() {
     return this.adapter.get('recent_progressions', []) || [];
   }
 
   /**
    * 添加到最近使用
+   * @param {string} progression 进行字符串
    */
-  addRecentProgression(progression: string): void {
+  addRecentProgression(progression) {
     const recent = this.getRecentProgressions();
     const filtered = recent.filter(p => p !== progression);
     filtered.unshift(progression);
@@ -146,22 +183,26 @@ export class StorageManager {
 
   /**
    * 保存收藏的进行
+   * @param {string[]} progressions 进行数组
    */
-  saveFavoriteProgressions(progressions: string[]): void {
+  saveFavoriteProgressions(progressions) {
     this.adapter.set('favorite_progressions', progressions);
   }
 
   /**
    * 获取收藏的进行
+   * @returns {string[]} 进行数组
    */
-  getFavoriteProgressions(): string[] {
+  getFavoriteProgressions() {
     return this.adapter.get('favorite_progressions', []) || [];
   }
 
   /**
    * 切换收藏状态
+   * @param {string} progression 进行字符串
+   * @returns {boolean} 是否已收藏
    */
-  toggleFavoriteProgression(progression: string): boolean {
+  toggleFavoriteProgression(progression) {
     const favorites = this.getFavoriteProgressions();
     const index = favorites.indexOf(progression);
     
@@ -179,10 +220,11 @@ export class StorageManager {
 
 /**
  * 创建平台适配的存储管理器
+ * @returns {StorageManager} 存储管理器实例
  */
-export function createStorageManager(): StorageManager {
+export function createStorageManager() {
   // 检测运行环境
-  const wx = (globalThis as any).wx;
+  const wx = globalThis.wx;
   if (typeof wx !== 'undefined' && wx.getStorageSync) {
     // 小程序环境
     return new StorageManager(new MiniprogramStorageAdapter());
@@ -199,22 +241,42 @@ export function createStorageManager(): StorageManager {
 /**
  * 内存存储适配器（降级方案）
  */
-class MemoryStorageAdapter implements StorageAdapter {
-  private storage: Map<string, any> = new Map();
+class MemoryStorageAdapter {
+  constructor() {
+    this.storage = new Map();
+  }
 
-  get<T>(key: string, defaultValue?: T): T | null {
+  /**
+   * 获取存储值
+   * @param {string} key 键名
+   * @param {any} defaultValue 默认值
+   * @returns {any} 存储值
+   */
+  get(key, defaultValue) {
     return this.storage.get(key) || defaultValue || null;
   }
 
-  set<T>(key: string, value: T): void {
+  /**
+   * 设置存储值
+   * @param {string} key 键名
+   * @param {any} value 值
+   */
+  set(key, value) {
     this.storage.set(key, value);
   }
 
-  remove(key: string): void {
+  /**
+   * 删除存储值
+   * @param {string} key 键名
+   */
+  remove(key) {
     this.storage.delete(key);
   }
 
-  clear(): void {
+  /**
+   * 清空存储
+   */
+  clear() {
     this.storage.clear();
   }
 }

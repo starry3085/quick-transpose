@@ -2,8 +2,6 @@
  * 和弦数据常量
  */
 
-import type { KeyType } from '../types/chord';
-
 // 简化的调性列表（用于快速选择）
 export const SIMPLE_KEYS: KeyType[] = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
@@ -53,16 +51,16 @@ export const CHORD_MAPS = {
     'Bb': ['Bbm', 'Cdim', 'Db', 'Ebm', 'Fm', 'Gb', 'Ab'],
     'B': ['Bm', 'C#dim', 'D', 'Em', 'F#m', 'G', 'A']
   }
-} as const;
+};
 
 // 罗马数字标记
 export const ROMAN_NUMERALS = {
   major: ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'],
   minor: ['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII']
-} as const;
+};
 
 // 级数名称
-export const DEGREE_NAMES = ['一度', '二度', '三度', '四度', '五度', '六度', '七度'] as const;
+export const DEGREE_NAMES = ['一度', '二度', '三度', '四度', '五度', '六度', '七度'];
 
 // 常用和弦进行
 export const COMMON_PROGRESSIONS = [
@@ -79,4 +77,4 @@ export const CHORD_TYPE_LEGENDS = [
   { label: '大三和弦', example: 'C, F, G', description: '明亮、稳定的和弦' },
   { label: '小三和弦', example: 'Dm, Em, Am', description: '柔和、忧郁的和弦' },
   { label: '减三和弦', example: 'Bdim', description: '紧张、不稳定的和弦' }
-] as const;
+];

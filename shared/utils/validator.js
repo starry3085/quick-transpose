@@ -2,15 +2,13 @@
  * 输入验证工具函数
  */
 
-import type { ValidationResult } from '../types/chord';
-
 export class Validator {
   /**
    * 验证和弦进行输入
-   * @param progression 和弦进行字符串
-   * @returns 验证结果
+   * @param {string} progression 和弦进行字符串
+   * @returns {Object} 验证结果
    */
-  static validateProgression(progression: string): ValidationResult {
+  static validateProgression(progression) {
     if (!progression || !progression.trim()) {
       return {
         isValid: false,
@@ -45,10 +43,10 @@ export class Validator {
 
   /**
    * 验证调性
-   * @param key 调性字符串
-   * @returns 是否有效
+   * @param {string} key 调性字符串
+   * @returns {boolean} 是否有效
    */
-  static validateKey(key: string): boolean {
+  static validateKey(key) {
     const validKeys = [
       'C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 
       'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B'
@@ -58,10 +56,10 @@ export class Validator {
 
   /**
    * 验证和弦名称
-   * @param chord 和弦名称
-   * @returns 是否有效
+   * @param {string} chord 和弦名称
+   * @returns {boolean} 是否有效
    */
-  static validateChord(chord: string): boolean {
+  static validateChord(chord) {
     if (!chord || chord.trim().length === 0) {
       return false;
     }
@@ -73,10 +71,10 @@ export class Validator {
 
   /**
    * 清理和弦进行输入
-   * @param progression 原始输入
-   * @returns 清理后的字符串
+   * @param {string} progression 原始输入
+   * @returns {string} 清理后的字符串
    */
-  static cleanProgression(progression: string): string {
+  static cleanProgression(progression) {
     return progression
       .replace(/[^\d\s,]/g, '') // 只保留数字、空格和逗号
       .replace(/\s+/g, ' ')     // 多个空格合并为一个
@@ -86,10 +84,10 @@ export class Validator {
 
   /**
    * 格式化和弦进行显示
-   * @param progression 和弦进行
-   * @returns 格式化后的字符串
+   * @param {string} progression 和弦进行
+   * @returns {string} 格式化后的字符串
    */
-  static formatProgression(progression: string): string {
+  static formatProgression(progression) {
     const cleaned = this.cleanProgression(progression);
     return cleaned.split(/\s+/).join(' ');
   }

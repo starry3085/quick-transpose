@@ -3,39 +3,16 @@
  * Compatible with both React and WeChat Miniprogram
  */
 
-// WeChat miniprogram global types
-declare global {
-  const wx: {
-    getStorageSync: (key: string) => any;
-    setStorageSync: (key: string, data: any) => void;
-    removeStorageSync: (key: string) => void;
-  };
-}
-
-export interface StateListener<T = any> {
-  (newState: T, oldState: T): void;
-}
-
-export interface StateManagerOptions {
-  persistKey?: string;
-  enablePersistence?: boolean;
-  platform?: 'web' | 'miniprogram';
-}
-
-// Miniprogram page interface
-interface MiniprogramPage {
-  setData: (data: any) => void;
-  unsubscribeState?: () => void;
-}
-
-export class StateManager<T extends Record<string, any>> {
-  private state: T;
-  private listeners: Map<string, Set<StateListener<any>>> = new Map();
-  private globalListeners: Set<StateListener<T>> = new Set();
-  private options: StateManagerOptions;
-
-  constructor(initialState: T, options: StateManagerOptions = {}) {
+export class StateManager {
+  /**
+   * 构造函数
+   * @param {Object} initialState 初始状态
+   * @param {Object} options 配置选项
+   */
+  constructor(initialState, options = {}) {
     this.state = { ...initialState };
+    this.listeners = new Map();
+    this.globalListeners = new Set();
     this.options = {
       enablePersistence: false,
       platform: 'web',
@@ -50,22 +27,26 @@ export class StateManager<T extends Record<string, any>> {
 
   /**
    * Get current state
+   * @returns {Object} 当前状态
    */
-  getState(): T {
+  getState() {
     return { ...this.state };
   }
 
   /**
    * Get specific state property
+   * @param {string} key 属性键
+   * @returns {any} 属性值
    */
-  getStateProperty<K extends keyof T>(key: K): T[K] {
+  getStateProperty(key) {
     return this.state[key];
   }
 
   /**
    * Set state (partial update)
+   * @param {Object} partialState 部分状态更新
    */
-  setState(partialState: Partial<T>): void {
+  setState(partialState) {
     const oldState = { ...this.state };
     this.state = { ...this.state, ...partialState };
 
@@ -92,14 +73,17 @@ export class StateManager<T extends Record<string, any>> {
 
   /**
    * Subscribe to state changes for a specific property
+   * @param {string} key 属性键
+   * @param {Function} listener 监听器函数
+   * @returns {Function} 取消订阅函数
    */
-  subscribe<K extends keyof T>(key: K, listener: StateListener<T[K]>): () => void {
+  subscribe(key, listener) {
     const keyStr = String(key);
     if (!this.listeners.has(keyStr)) {
       this.listeners.set(keyStr, new Set());
     }
     
-    const listeners = this.listeners.get(keyStr)!;
+    const listeners = this.listeners.get(keyStr);
     listeners.add(listener);
 
     // Return unsubscribe function
@@ -113,8 +97,10 @@ export class StateManager<T extends Record<string, any>> {
 
   /**
    * Subscribe to all state changes
+   * @param {Function} listener 监听器函数
+   * @returns {Function} 取消订阅函数
    */
-  subscribeGlobal(listener: StateListener<T>): () => void {
+  subscribeGlobal(listener) {
     this.globalListeners.add(listener);
 
     // Return unsubscribe function
@@ -125,15 +111,16 @@ export class StateManager<T extends Record<string, any>> {
 
   /**
    * Reset state to initial values
+   * @param {Object} newInitialState 新的初始状态
    */
-  reset(newInitialState?: Partial<T>): void {
+  reset(newInitialState) {
     const oldState = { ...this.state };
     
     if (newInitialState) {
       this.state = { ...this.state, ...newInitialState };
     } else {
-      // Reset to empty state (you might want to store initial state)
-      this.state = {} as T;
+      // Reset to empty state
+      this.state = {};
     }
 
     // Notify all listeners
@@ -150,9 +137,9 @@ export class StateManager<T extends Record<string, any>> {
   /**
    * Load persisted state from storage
    */
-  private loadPersistedState(): void {
+  loadPersistedState() {
     try {
-      const persistedData = this.getStorageItem(this.options.persistKey!);
+      const persistedData = this.getStorageItem(this.options.persistKey);
       if (persistedData) {
         const parsedData = JSON.parse(persistedData);
         this.state = { ...this.state, ...parsedData };
@@ -165,10 +152,10 @@ export class StateManager<T extends Record<string, any>> {
   /**
    * Persist current state to storage
    */
-  private persistState(): void {
+  persistState() {
     try {
       const dataToStore = JSON.stringify(this.state);
-      this.setStorageItem(this.options.persistKey!, dataToStore);
+      this.setStorageItem(this.options.persistKey, dataToStore);
     } catch (error) {
       console.warn('Failed to persist state:', error);
     }
@@ -177,9 +164,9 @@ export class StateManager<T extends Record<string, any>> {
   /**
    * Clear persisted state from storage
    */
-  private clearPersistedState(): void {
+  clearPersistedState() {
     try {
-      this.removeStorageItem(this.options.persistKey!);
+      this.removeStorageItem(this.options.persistKey);
     } catch (error) {
       console.warn('Failed to clear persisted state:', error);
     }
@@ -188,10 +175,10 @@ export class StateManager<T extends Record<string, any>> {
   /**
    * Platform-specific storage operations
    */
-  private getStorageItem(key: string): string | null {
+  getStorageItem(key) {
     if (this.options.platform === 'miniprogram') {
       try {
-        return (wx as any).getStorageSync(key) || null;
+        return globalThis.wx?.getStorageSync(key) || null;
       } catch {
         return null;
       }
@@ -200,17 +187,17 @@ export class StateManager<T extends Record<string, any>> {
     }
   }
 
-  private setStorageItem(key: string, value: string): void {
+  setStorageItem(key, value) {
     if (this.options.platform === 'miniprogram') {
-      (wx as any).setStorageSync(key, value);
+      globalThis.wx?.setStorageSync(key, value);
     } else {
       localStorage.setItem(key, value);
     }
   }
 
-  private removeStorageItem(key: string): void {
+  removeStorageItem(key) {
     if (this.options.platform === 'miniprogram') {
-      (wx as any).removeStorageSync(key);
+      globalThis.wx?.removeStorageSync(key);
     } else {
       localStorage.removeItem(key);
     }
@@ -219,36 +206,34 @@ export class StateManager<T extends Record<string, any>> {
 
 /**
  * Create a state manager instance
+ * @param {Object} initialState 初始状态
+ * @param {Object} options 配置选项
+ * @returns {StateManager} 状态管理器实例
  */
-export function createStateManager<T extends Record<string, any>>(
-  initialState: T,
-  options?: StateManagerOptions
-): StateManager<T> {
+export function createStateManager(initialState, options) {
   return new StateManager(initialState, options);
 }
 
 /**
  * React hook for using state manager
+ * @param {StateManager} stateManager 状态管理器
+ * @returns {Array} [state, setState]
  */
-export function useStateManager<T extends Record<string, any>>(
-  stateManager: StateManager<T>
-): [T, (partialState: Partial<T>) => void] {
-  // This would need React imports in actual implementation
-  // For now, providing the interface
+export function useStateManager(stateManager) {
   const state = stateManager.getState();
-  const setState = (partialState: Partial<T>) => stateManager.setState(partialState);
+  const setState = (partialState) => stateManager.setState(partialState);
   
   return [state, setState];
 }
 
 /**
  * Miniprogram mixin for using state manager
+ * @param {StateManager} stateManager 状态管理器
+ * @returns {Object} 小程序混入对象
  */
-export function createMiniprogramStateMixin<T extends Record<string, any>>(
-  stateManager: StateManager<T>
-) {
+export function createMiniprogramStateMixin(stateManager) {
   return {
-    onLoad(this: MiniprogramPage) {
+    onLoad() {
       // Subscribe to state changes and update page data
       this.unsubscribeState = stateManager.subscribeGlobal((newState) => {
         this.setData(newState);
@@ -258,7 +243,7 @@ export function createMiniprogramStateMixin<T extends Record<string, any>>(
       this.setData(stateManager.getState());
     },
 
-    onUnload(this: MiniprogramPage) {
+    onUnload() {
       // Clean up subscription
       if (this.unsubscribeState) {
         this.unsubscribeState();
@@ -266,12 +251,12 @@ export function createMiniprogramStateMixin<T extends Record<string, any>>(
     },
 
     // Helper method to update state
-    updateState(partialState: Partial<T>) {
+    updateState(partialState) {
       stateManager.setState(partialState);
     },
 
     // Helper method to get current state
-    getCurrentState(): T {
+    getCurrentState() {
       return stateManager.getState();
     }
   };

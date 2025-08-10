@@ -3,13 +3,6 @@
  * 提供跨平台一致的错误消息和处理机制
  */
 
-export interface ErrorInfo {
-  code: string;
-  message: string;
-  type: 'validation' | 'system' | 'network' | 'user';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-}
-
 /**
  * 错误代码常量
  */
@@ -129,8 +122,12 @@ export class ErrorHandler {
 
   /**
    * 创建标准化错误
+   * @param {string} code 错误代码
+   * @param {string} customMessage 自定义消息
+   * @param {any} context 上下文信息
+   * @returns {Object} 错误信息
    */
-  static createError(code: string, customMessage?: string, context?: any): ErrorInfo {
+  static createError(code, customMessage, context) {
     const baseError = ERROR_MESSAGES[code];
     if (!baseError) {
       return {
@@ -167,8 +164,11 @@ export class ErrorHandler {
 
   /**
    * 处理系统错误
+   * @param {Error} error 错误对象
+   * @param {string} code 错误代码
+   * @returns {Object} 错误信息
    */
-  static handleSystemError(error: Error, code: string = ERROR_CODES.TRANSPOSE_FAILED): ErrorInfo {
+  static handleSystemError(error, code = ERROR_CODES.TRANSPOSE_FAILED) {
     const errorInfo = this.createError(code, error.message, {
       stack: error.stack,
       name: error.name
@@ -229,27 +229,24 @@ export class ErrorHandler {
 
   /**
    * 获取错误日志
+   * @returns {Array} 错误日志数组
    */
-  static getErrorLog(): Array<{ timestamp: number; error: ErrorInfo; context?: any }> {
+  static getErrorLog() {
     return [...this.errorLog];
   }
 
   /**
    * 清空错误日志
    */
-  static clearErrorLog(): void {
+  static clearErrorLog() {
     this.errorLog = [];
   }
 
   /**
    * 获取错误统计
+   * @returns {Object} 错误统计信息
    */
-  static getErrorStats(): {
-    total: number;
-    byType: Record<string, number>;
-    bySeverity: Record<string, number>;
-    recent: number;
-  } {
+  static getErrorStats() {
     const now = Date.now();
     const oneHourAgo = now - 60 * 60 * 1000;
 
@@ -304,7 +301,7 @@ export function withErrorHandling(errorCode: string = ERROR_CODES.TRANSPOSE_FAIL
         
         // 处理Promise返回值
         if (result && typeof result.then === 'function') {
-          return result.catch((error: Error) => {
+          return result.catch((error) => {
             const errorInfo = ErrorHandler.handleSystemError(error, errorCode);
             throw errorInfo;
           });
@@ -312,7 +309,7 @@ export function withErrorHandling(errorCode: string = ERROR_CODES.TRANSPOSE_FAIL
         
         return result;
       } catch (error) {
-        const errorInfo = ErrorHandler.handleSystemError(error as Error, errorCode);
+        const errorInfo = ErrorHandler.handleSystemError(error, errorCode);
         throw errorInfo;
       }
     };
